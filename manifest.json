@@ -1,7 +1,7 @@
 {
   "name": "日文歌詞播放器",
   "short_name": "日文歌",
-  "start_url": "./index.html",
+  "start_url": "/Audio_Player/",
   "display": "standalone",
   "background_color": "#f5f5f7",
   "theme_color": "#007aff",
