@@ -1,0 +1,39 @@
+/* 隱藏/顯示視圖的魔法 */
+.view { display: none; }
+.view.active { display: block; }
+
+/* 主畫面按鈕 */
+.menu-btn {
+  display: block;
+  width: 80%;
+  margin: 20px auto;
+  padding: 15px;
+  font-size: 18px;
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.menu-btn.favorite-btn { background-color: #ff2d55; }
+
+/* 搜尋框與清單 */
+#search-input {
+  width: 90%;
+  margin: 10px 5%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+#song-list { list-style: none; padding: 0; margin: 0; }
+.song-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+.fav-icon { font-size: 24px; color: #ccc; }
+.fav-icon.active { color: #ff2d55; }
