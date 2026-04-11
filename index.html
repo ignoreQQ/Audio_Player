@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日文歌學習 PWA</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f5f5f7;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      padding-bottom: 120px; /* 留空間給底部播放器 */
+    }
+    
+    /* 歌詞行樣式 */
+    .lyric-line {
+      margin: 30px 0;
+      padding-left: 10px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 類似 SwiftUI 的 spring 動畫 */
+      cursor: pointer;
+      opacity: 0.4;
+    }
+    
+    /* 高亮狀態的歌詞 */
+    .lyric-line.active {
+      opacity: 1;
+      transform: translateX(15px) scale(1.05); /* 重現你的放大與位移效果 */
+    }
+
+    /* 假名與漢字排版 (取代你的 VStack) */
+    ruby {
+      font-size: 24px;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    rt {
+      font-size: 12px;
+      color: #007aff; /* 蘋果藍 */
+    }
+    .translation {
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    /* 底部固定播放列 */
+    .player-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px); /* 類似 .ultraThinMaterial */
+      padding: 15px 20px;
+      box-sizing: border-box;
+      border-top: 1px solid #ddd;
+    }
+    audio {
+      width: 100%;
+    }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="日文歌">
+
+  <script>
+    // 註冊 Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./Service_Worker.js');
+      });
+    }
+  </script>
+
+</head>
+<body>
+
+  <h1>Lemon - 米津玄師</h1>
+  
+  <div id="lyrics-container">載入中...</div>
+
+  <div class="player-bar">
+    <audio id="audio-player" controls preload="metadata">
+      <source src="https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    // 假設你的 JSON 結構與 Swift 對應
+    const lyricsURL = "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json";
+    let lyricsData = [];
+    let currentLineIndex = -1;
+
+    const audioPlayer = document.getElementById('audio-player');
+    const lyricsContainer = document.getElementById('lyrics-container');
+
+    // 1. 抓取並渲染歌詞 (對應你的 fetchLyrics)
+    async function fetchLyrics() {
+      try {
+        const response = await fetch(lyricsURL);
+        lyricsData = await response.json();
+        renderLyrics();
+      } catch (error) {
+        lyricsContainer.innerHTML = "歌詞載入失敗";
+      }
+    }
+
+    // 2. 渲染歌詞畫面 (對應你的 LyricRow 與 HTML Ruby 標籤)
+    function renderLyrics() {
+      lyricsContainer.innerHTML = ''; 
+      
+      lyricsData.forEach((line, index) => {
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'lyric-line';
+        lineDiv.id = `line-${index}`;
+        
+        // 組合假名與漢字
+        let wordsHTML = '';
+        line.words.forEach(word => {
+          wordsHTML += `<ruby>${word.text}<rt>${word.furigana || ''}</rt></ruby>`;
+        });
+
+        lineDiv.innerHTML = `
+          <div>${wordsHTML}</div>
+          <div class="translation">${line.translation}</div>
+        `;
+
+        // 點擊跳轉 (對應 onTapGesture)
+        lineDiv.addEventListener('click', () => {
+          audioPlayer.currentTime = line.startTime + 0.05;
+          audioPlayer.play();
+        });
+
+        lyricsContainer.appendChild(lineDiv);
+      });
+    }
+
+    // 3. 監聽音樂播放時間 (對應 SwiftUI 的 onChange)
+    audioPlayer.addEventListener('timeupdate', () => {
+      const currentTime = audioPlayer.currentTime;
+      
+      // 找出目前時間對應的最後一行歌詞
+      // (這段邏輯跟你 Swift 寫的 `lyricsArray.last(where: { newValue >= $0.startTime })` 一模一樣)
+      let activeIndex = -1;
+      for (let i = lyricsData.length - 1; i >= 0; i--) {
+        if (currentTime >= lyricsData[i].startTime) {
+          activeIndex = i;
+          break;
+        }
+      }
+
+      // 如果歌詞行數有變換，觸發 UI 更新與滾動
+      if (activeIndex !== currentLineIndex && activeIndex !== -1) {
+        // 移除舊的高亮
+        if (currentLineIndex !== -1) {
+          document.getElementById(`line-${currentLineIndex}`).classList.remove('active');
+        }
+        
+        // 加上新的高亮
+        currentLineIndex = activeIndex;
+        const activeLine = document.getElementById(`line-${currentLineIndex}`);
+        activeLine.classList.add('active');
+
+        // 自動平滑滾動並置中 (對應 proxy.scrollTo(anchor: .center))
+        activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    // 啟動程式
+    fetchLyrics();
+  </script>
+</body>
+</html>
