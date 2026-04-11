@@ -2,161 +2,208 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日文歌曲</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>日文歌學習 PWA</title>
   <style>
-    /* === 基礎樣式 === */
+    /* === 1. 動態柔和背景 (為了襯托玻璃效果) === */
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f5f5f7;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-      padding-bottom: 120px;
+      margin: 0; padding: 0;
+      background: linear-gradient(-45deg, #e0eafc, #cfdef3, #e8f5e9, #f3e5f5);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #1d1d1f;
+      padding-bottom: 150px; /* 留給新的巨大播放列 */
+      overflow-x: hidden;
     }
-    
-    /* === 歌詞區樣式 === */
-    .lyric-line {
-      margin: 30px 0;
-      padding-left: 10px;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      cursor: pointer;
-      opacity: 0.4;
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-    .lyric-line.active {
-      opacity: 1;
-      transform: translateX(15px) scale(1.05);
-    }
-    ruby { font-size: 24px; font-weight: bold; margin-right: 5px; }
-    rt { font-size: 12px; color: #007aff; }
-    .translation { font-size: 16px; margin-top: 8px; }
 
-    /* === 播放器底列 === */
-    .player-bar {
+    /* === 2. 核心元件：Liquid Glass 玻璃態按鈕 === */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px); /* 給 iOS Safari 用的 */
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .liquid-btn {
+      display: block; width: 85%; margin: 20px auto; padding: 18px;
+      font-size: 18px; font-weight: 600; color: #1d1d1f;
+      border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      cursor: pointer; transition: all 0.3s ease;
+    }
+    .liquid-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.6); }
+
+    /* === 3. 全域客製化播放器 (Apple Music 風格) === */
+    #global-player {
       position: fixed; bottom: 0; left: 0; width: 100%;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px);
-      padding: 15px 20px; box-sizing: border-box;
-      border-top: 1px solid #ddd;
+      padding: 15px 20px 25px 20px; box-sizing: border-box;
+      border-top-left-radius: 30px; border-top-right-radius: 30px;
+      z-index: 1000; display: none; /* 有音樂才顯示 */
+      transition: transform 0.3s ease;
     }
-    audio { width: 100%; }
+    .player-info { text-align: center; margin-bottom: 15px; }
+    .player-title { font-weight: bold; font-size: 16px; }
+    .player-artist { font-size: 12px; color: #666; }
+    
+    /* 播放控制按鈕區 */
+    .controls { display: flex; justify-content: center; align-items: center; gap: 25px; margin-bottom: 10px; }
+    .ctrl-btn {
+      background: none; border: none; font-size: 24px; color: #1d1d1f; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      width: 45px; height: 45px; border-radius: 50%;
+      transition: 0.2s;
+    }
+    .ctrl-btn:active { background: rgba(0,0,0,0.1); }
+    .play-pause-btn { font-size: 32px; width: 55px; height: 55px; background: rgba(255,255,255,0.8); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .skip-text { font-size: 10px; font-weight: bold; margin-top: -2px;} /* 10秒數字 */
 
-    /* === SPA 畫面切換樣式 === */
-    .view { display: none; }
-    .view.active { display: block; }
-    
-    .menu-btn {
-      display: block; width: 80%; margin: 20px auto; padding: 15px;
-      font-size: 18px; background-color: #007aff; color: white;
-      border: none; border-radius: 12px; cursor: pointer;
+    /* 進度條 */
+    .progress-container { display: flex; align-items: center; gap: 10px; font-size: 12px; font-family: monospace; color: #555; }
+    input[type=range] {
+      flex-grow: 1; -webkit-appearance: none; height: 6px; border-radius: 3px;
+      background: rgba(0,0,0,0.1); outline: none;
     }
-    .menu-btn.favorite-btn { background-color: #ff2d55; }
-    
-    /* === 曲庫與搜尋樣式 === */
-    .header { display: flex; align-items: center; margin-bottom: 15px; }
-    .header button { margin-right: 15px; padding: 8px 12px; border: none; border-radius: 8px; background: #ddd; cursor: pointer;}
-    
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+      border-radius: 50%; background: #1d1d1f; cursor: pointer; transition: 0.2s;
+    }
+    input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); }
+
+    /* === 4. 其他原有版面樣式 === */
+    .view { display: none; padding: 20px; }
+    .view.active { display: block; }
+    .header { display: flex; align-items: center; margin-bottom: 20px; }
+    .back-btn { 
+      padding: 10px 15px; border: none; border-radius: 15px; 
+      background: rgba(255,255,255,0.5); cursor: pointer; font-weight: bold;
+    }
     #search-input {
-      width: 100%; margin-bottom: 15px; padding: 10px;
-      font-size: 16px; border-radius: 8px; border: 1px solid #ccc;
-      box-sizing: border-box;
+      width: 100%; padding: 15px; font-size: 16px; border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.5);
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); margin-bottom: 20px; outline: none;
     }
     #song-list { list-style: none; padding: 0; margin: 0; }
     .song-item {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 15px 10px; border-bottom: 1px solid #eee; cursor: pointer;
+      padding: 18px; margin-bottom: 12px; border-radius: 20px;
+      cursor: pointer; transition: 0.2s;
     }
-    .fav-icon { font-size: 28px; color: #ccc; padding-left: 20px;}
+    .song-item:active { transform: scale(0.98); }
+    .fav-icon { font-size: 24px; color: rgba(0,0,0,0.2); padding: 10px; }
     .fav-icon.active { color: #ff2d55; }
-  </style>
-  
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-512.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="日文歌">
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./Service_Worker.js');
-      });
-    }
-  </script>
+    /* 歌詞樣式 */
+    .lyric-line { margin: 30px 0; padding-left: 10px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; opacity: 0.4; }
+    .lyric-line.active { opacity: 1; transform: translateX(15px) scale(1.05); }
+    ruby { font-size: 24px; font-weight: bold; margin-right: 5px; }
+    rt { font-size: 12px; color: #007aff; }
+    .translation { font-size: 16px; margin-top: 8px; }
+  </style>
 </head>
 <body>
 
+  <audio id="audio-player" preload="metadata"></audio>
+
   <div id="home-view" class="view active">
-    <h1 style="text-align: center; margin-top: 50px;">🎵 日文歌學習</h1>
+    <div style="text-align: center; margin: 60px 0;">
+      <h1 style="font-size: 32px; letter-spacing: 2px;">🎵<br>日文歌學習</h1>
+    </div>
     <div class="menu-container">
-      <button class="menu-btn" onclick="showLibrary(false)">進入曲庫 (全部歌曲)</button>
-      <button class="menu-btn favorite-btn" onclick="showLibrary(true)">我的收藏</button>
+      <button class="liquid-btn" onclick="showLibrary(false)">進入曲庫 (全部歌曲)</button>
+      <button class="liquid-btn" onclick="showLibrary(true)">我的收藏 🤍</button>
     </div>
   </div>
 
   <div id="library-view" class="view">
     <div class="header">
-      <button onclick="showHome()">⬅ 返回</button>
-      <h2 id="library-title" style="margin:0;">全部歌曲</h2>
+      <button class="back-btn glass-panel" onclick="showHome()">❮ 返回</button>
+      <h2 id="library-title" style="margin:0 0 0 15px;">全部歌曲</h2>
     </div>
-    <input type="text" id="search-input" placeholder="搜尋歌名或歌手..." onkeyup="filterSongs()">
+    <input type="text" id="search-input" placeholder="🔍 搜尋歌名或歌手..." onkeyup="filterSongs()">
     <ul id="song-list"></ul>
   </div>
 
   <div id="player-view" class="view">
     <div class="header">
-      <button onclick="showLibrary(currentIsFavorites)">⬅ 返回曲庫</button>
-      <h2 id="player-title" style="margin:0;">播放中</h2>
+      <button class="back-btn glass-panel" onclick="showLibrary(currentIsFavorites)">❮ 返回清單</button>
     </div>
     <div id="lyrics-container">請先選擇一首歌曲</div>
-    <div class="player-bar">
-      <audio id="audio-player" controls preload="metadata"></audio>
+  </div>
+
+  <div id="global-player" class="glass-panel">
+    
+    <div class="player-info" onclick="showPlayerView()">
+      <div class="player-title" id="ui-title">--</div>
+      <div class="player-artist" id="ui-artist">--</div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl-btn" onclick="playPrevious()">⏮</button>
+      <button class="ctrl-btn" onclick="skipTime(-10)">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <span>↺</span><span class="skip-text">-10</span>
+        </div>
+      </button>
+      
+      <button class="ctrl-btn play-pause-btn" id="play-pause-btn" onclick="togglePlay()">▶️</button>
+      
+      <button class="ctrl-btn" onclick="skipTime(10)">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <span>↻</span><span class="skip-text">+10</span>
+        </div>
+      </button>
+      <button class="ctrl-btn" onclick="playNext()">⏭</button>
+    </div>
+
+    <div class="progress-container">
+      <span id="time-current">0:00</span>
+      <input type="range" id="progress-bar" value="0" max="100">
+      <span id="time-total">0:00</span>
     </div>
   </div>
 
   <script>
     // ==========================================
-    // 1. 資料區：滿滿的曲庫 (換成你真實的 GitHub 連結)
+    // 1. 資料區 (你的曲庫)
     // ==========================================
     const allSongs = [
-      { 
-        id: "s1", title: "Lemon", artist: "米津玄師", 
-        audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", 
-        lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" 
-      },
-      { 
-        id: "s2", title: "ベテルギウス", artist: "優里Yuuri", 
-        audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3", 
-        lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json" 
-      },
-      { 
-        id: "s3", title: "Teacher", artist: "友成空", 
-        audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Teacher.mp3", 
-        lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json" 
-      }
+      { id: "s1", title: "Lemon", artist: "米津玄師", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" },
+      { id: "s2", title: "ベテルギウス", artist: "優里Yuuri", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json" },
+      { id: "s3", title: "Teacher", artist: "友成空", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Teacher.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json" }
     ];
 
     let currentIsFavorites = false;
     let favoriteIds = JSON.parse(localStorage.getItem('myFavSongs')) || [];
-    
-    // 播放器相關變數
-    let lyricsData = [];
-    let currentLineIndex = -1;
+    let currentSongIndexInList = 0; // 用來記錄上一首/下一首
+    let currentPlaylist = []; // 記錄目前是在播收藏清單還是全部清單
+
     const audioPlayer = document.getElementById('audio-player');
     const lyricsContainer = document.getElementById('lyrics-container');
+    const globalPlayer = document.getElementById('global-player');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const timeCurrentLabel = document.getElementById('time-current');
+    const timeTotalLabel = document.getElementById('time-total');
+    let lyricsData = [];
+    let currentLineIndex = -1;
+    let isDragging = false; // 判斷使用者是否正在拖曳進度條
 
     // ==========================================
-    // 2. 畫面切換與清單邏輯
+    // 2. 視圖切換
     // ==========================================
     function hideAllViews() {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     }
-
-    function showHome() {
-      hideAllViews();
-      document.getElementById('home-view').classList.add('active');
-    }
-
+    function showHome() { hideAllViews(); document.getElementById('home-view').classList.add('active'); }
     function showLibrary(onlyFavorites) {
       hideAllViews();
       currentIsFavorites = onlyFavorites;
@@ -165,29 +212,36 @@
       document.getElementById('search-input').value = "";
       renderSongList();
     }
+    function showPlayerView() {
+      hideAllViews();
+      document.getElementById('player-view').classList.add('active');
+    }
 
+    // ==========================================
+    // 3. 曲庫渲染與邏輯
+    // ==========================================
     function renderSongList(searchQuery = "") {
       const listContainer = document.getElementById('song-list');
       listContainer.innerHTML = ''; 
 
-      let filteredSongs = allSongs.filter(song => {
+      currentPlaylist = allSongs.filter(song => {
         if (currentIsFavorites && !favoriteIds.includes(song.id)) return false;
         const query = searchQuery.toLowerCase();
         return song.title.toLowerCase().includes(query) || song.artist.toLowerCase().includes(query);
       });
 
-      filteredSongs.forEach(song => {
+      currentPlaylist.forEach((song, index) => {
         const li = document.createElement('li');
-        li.className = 'song-item';
+        li.className = 'song-item glass-panel'; // 給選單加上玻璃效果
         
         const isFav = favoriteIds.includes(song.id);
         const starClass = isFav ? "fav-icon active" : "fav-icon";
         const starSymbol = isFav ? "♥" : "♡";
 
         li.innerHTML = `
-          <div style="flex-grow: 1;" onclick="playSong('${song.id}')">
+          <div style="flex-grow: 1;" onclick="playSong(${index})">
             <div style="font-size: 18px; font-weight: bold;">${song.title}</div>
-            <div style="font-size: 14px; color: gray;">${song.artist}</div>
+            <div style="font-size: 14px; color: #555;">${song.artist}</div>
           </div>
           <div class="${starClass}" onclick="toggleFavorite('${song.id}', event)">${starSymbol}</div>
         `;
@@ -195,104 +249,108 @@
       });
     }
 
-    function filterSongs() {
-      renderSongList(document.getElementById('search-input').value);
-    }
+    function filterSongs() { renderSongList(document.getElementById('search-input').value); }
 
     function toggleFavorite(songId, event) {
       event.stopPropagation(); 
-      if (favoriteIds.includes(songId)) {
-        favoriteIds = favoriteIds.filter(id => id !== songId);
-      } else {
-        favoriteIds.push(songId);
-      }
+      if (favoriteIds.includes(songId)) favoriteIds = favoriteIds.filter(id => id !== songId);
+      else favoriteIds.push(songId);
       localStorage.setItem('myFavSongs', JSON.stringify(favoriteIds));
       filterSongs(); 
     }
 
     // ==========================================
-    // 3. 播放與歌詞解析邏輯
+    // 4. 高科技播放器控制邏輯
     // ==========================================
-    function playSong(songId) {
-      const song = allSongs.find(s => s.id === songId);
+    // 格式化時間 (將秒數轉為分:秒)
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return "0:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function playSong(index) {
+      if (index < 0 || index >= currentPlaylist.length) return;
+      currentSongIndexInList = index;
+      const song = currentPlaylist[index];
       
-      hideAllViews();
-      document.getElementById('player-view').classList.add('active');
-      document.getElementById('player-title').innerText = song.title;
+      // 更新 UI
+      document.getElementById('ui-title').innerText = song.title;
+      document.getElementById('ui-artist').innerText = song.artist;
+      globalPlayer.style.display = 'block'; // 顯示全域播放器
+      showPlayerView(); // 自動跳轉到歌詞頁
       
-      // 設定音樂與載入歌詞
       audioPlayer.src = song.audio;
       fetchLyrics(song.lyrics);
       audioPlayer.play();
+      playPauseBtn.innerText = '⏸';
 
-      // 設定手機鎖定畫面的控制資訊 (Media Session API)
+      // 鎖定畫面設定
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
-          title: song.title,
-          artist: song.artist,
-          album: '日文歌學習',
-          artwork: [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }]
+          title: song.title, artist: song.artist, album: '日文歌學習'
         });
         navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
         navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
+        navigator.mediaSession.setActionHandler('previoustrack', () => playPrevious());
+        navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
       }
     }
 
-    async function fetchLyrics(url) {
-      lyricsContainer.innerHTML = '歌詞載入中...';
-      currentLineIndex = -1; // 重置狀態
-      try {
-        const response = await fetch(url);
-        lyricsData = await response.json();
-        renderLyrics();
-      } catch (error) {
-        lyricsContainer.innerHTML = "歌詞載入失敗";
+    // --- 自訂控制按鈕功能 ---
+    function togglePlay() {
+      if (audioPlayer.paused) {
+        audioPlayer.play();
+        playPauseBtn.innerText = '⏸';
+      } else {
+        audioPlayer.pause();
+        playPauseBtn.innerText = '▶️';
       }
     }
 
-    function renderLyrics() {
-      lyricsContainer.innerHTML = ''; 
-      lyricsData.forEach((line, index) => {
-        const lineDiv = document.createElement('div');
-        lineDiv.className = 'lyric-line';
-        lineDiv.id = `line-${index}`;
-        
-        let wordsHTML = '';
-        line.words.forEach(word => {
-          wordsHTML += `<ruby>${word.text}<rt>${word.furigana || ''}</rt></ruby>`;
-        });
-
-        lineDiv.innerHTML = `
-          <div>${wordsHTML}</div>
-          <div class="translation">${line.translation}</div>
-        `;
-
-        lineDiv.addEventListener('click', () => {
-          audioPlayer.currentTime = line.startTime + 0.05;
-          audioPlayer.play();
-        });
-
-        lyricsContainer.appendChild(lineDiv);
-      });
+    function skipTime(seconds) {
+      audioPlayer.currentTime += seconds;
     }
 
-    // 監聽播放時間並自動滾動
+    function playNext() {
+      let nextIndex = currentSongIndexInList + 1;
+      if (nextIndex >= currentPlaylist.length) nextIndex = 0; // 循環播放
+      playSong(nextIndex);
+    }
+
+    function playPrevious() {
+      let prevIndex = currentSongIndexInList - 1;
+      if (prevIndex < 0) prevIndex = currentPlaylist.length - 1;
+      playSong(prevIndex);
+    }
+
+    // --- 進度條互動邏輯 ---
+    audioPlayer.addEventListener('loadedmetadata', () => {
+      timeTotalLabel.innerText = formatTime(audioPlayer.duration);
+    });
+
     audioPlayer.addEventListener('timeupdate', () => {
+      // 確保音樂放完後按鈕變回播放
+      if (audioPlayer.ended) { playPauseBtn.innerText = '▶️'; playNext(); }
+      
+      if (!isDragging && audioPlayer.duration) {
+        const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        progressBar.value = percent;
+        timeCurrentLabel.innerText = formatTime(audioPlayer.currentTime);
+      }
+
+      // --- 歌詞同步邏輯 (保留你原本寫好的) ---
       const currentTime = audioPlayer.currentTime;
       let activeIndex = -1;
       for (let i = lyricsData.length - 1; i >= 0; i--) {
-        if (currentTime >= lyricsData[i].startTime) {
-          activeIndex = i;
-          break;
-        }
+        if (currentTime >= lyricsData[i].startTime) { activeIndex = i; break; }
       }
-
       if (activeIndex !== currentLineIndex && activeIndex !== -1) {
         if (currentLineIndex !== -1) {
           const oldLine = document.getElementById(`line-${currentLineIndex}`);
           if(oldLine) oldLine.classList.remove('active');
         }
-        
         currentLineIndex = activeIndex;
         const activeLine = document.getElementById(`line-${currentLineIndex}`);
         if(activeLine) {
@@ -302,6 +360,44 @@
       }
     });
 
+    // 拖曳進度條時
+    progressBar.addEventListener('input', (e) => {
+      isDragging = true;
+      const targetTime = (e.target.value / 100) * audioPlayer.duration;
+      timeCurrentLabel.innerText = formatTime(targetTime);
+    });
+    
+    // 放開進度條時跳轉
+    progressBar.addEventListener('change', (e) => {
+      isDragging = false;
+      audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
+    });
+
+    // ==========================================
+    // 5. 歌詞載入
+    // ==========================================
+    async function fetchLyrics(url) {
+      lyricsContainer.innerHTML = '<div style="text-align:center; color:#888;">歌詞載入中...</div>';
+      currentLineIndex = -1;
+      try {
+        const response = await fetch(url);
+        lyricsData = await response.json();
+        lyricsContainer.innerHTML = ''; 
+        lyricsData.forEach((line, index) => {
+          const lineDiv = document.createElement('div');
+          lineDiv.className = 'lyric-line';
+          lineDiv.id = `line-${index}`;
+          let wordsHTML = '';
+          line.words.forEach(word => { wordsHTML += `<ruby>${word.text}<rt>${word.furigana || ''}</rt></ruby>`; });
+          lineDiv.innerHTML = `<div>${wordsHTML}</div><div class="translation">${line.translation}</div>`;
+          // 點擊歌詞跳轉
+          lineDiv.addEventListener('click', () => { audioPlayer.currentTime = line.startTime + 0.05; audioPlayer.play(); playPauseBtn.innerText = '⏸'; });
+          lyricsContainer.appendChild(lineDiv);
+        });
+      } catch (error) {
+        lyricsContainer.innerHTML = "歌詞載入失敗";
+      }
+    }
   </script>
 </body>
 </html>
