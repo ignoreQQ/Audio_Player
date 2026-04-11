@@ -125,3 +125,49 @@ function playSong(songId) {
   // loadLyrics(song.lyrics);
   // audioPlayer.play();
 }
+
+// ==========================================
+    // 6. 音量控制與記憶邏輯
+    // ==========================================
+    const volumeBar = document.getElementById('volume-bar');
+    const volumeIcon = document.getElementById('volume-icon');
+    
+    // 從 localStorage 讀取上次的音量，如果沒有就預設 1.0 (最大聲)
+    let savedVolume = localStorage.getItem('mySavedVolume');
+    if (savedVolume !== null) {
+      audioPlayer.volume = parseFloat(savedVolume);
+      volumeBar.value = audioPlayer.volume * 100;
+      updateVolumeIcon(audioPlayer.volume);
+    }
+
+    // 監聽音量拉桿拖曳
+    volumeBar.addEventListener('input', (e) => {
+      const vol = e.target.value / 100;
+      audioPlayer.volume = vol;
+      localStorage.setItem('mySavedVolume', vol); // 存進個人端
+      updateVolumeIcon(vol);
+    });
+
+    // 點擊喇叭圖示切換靜音
+    function toggleMute() {
+      if (audioPlayer.volume > 0) {
+        // 記憶靜音前的音量
+        audioPlayer.dataset.lastVol = audioPlayer.volume;
+        audioPlayer.volume = 0;
+        volumeBar.value = 0;
+      } else {
+        // 恢復靜音前的音量
+        const restoreVol = audioPlayer.dataset.lastVol || 1;
+        audioPlayer.volume = restoreVol;
+        volumeBar.value = restoreVol * 100;
+      }
+      localStorage.setItem('mySavedVolume', audioPlayer.volume);
+      updateVolumeIcon(audioPlayer.volume);
+    }
+
+    // 根據音量大小更換圖示
+    function updateVolumeIcon(vol) {
+      if (vol === 0) volumeIcon.innerText = '🔇';
+      else if (vol < 0.5) volumeIcon.innerText = '🔉';
+      else volumeIcon.innerText = '🔊';
+    }
