@@ -1,4 +1,8 @@
-const CACHE_NAME = 'lyric-player-v1';
+const CACHE_NAME = 'lyric-player-v2';
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); 
+  // ... 原本的快取邏輯 ...
+});
 const ASSETS = [
   './',
   './index.html',
