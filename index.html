@@ -51,9 +51,12 @@
   </div>
 
   <div id="global-player" class="glass-panel">
-    <div class="player-info" onclick="showPlayerView()">
-      <div class="player-title" id="ui-title">--</div>
-      <div class="player-artist" id="ui-artist">--</div>
+    <div class="player-info-container" style="position: relative; margin-bottom: 15px;">
+      <div class="player-info" onclick="showPlayerView()" style="text-align: center; cursor: pointer;">
+        <div class="player-title" id="ui-title">--</div>
+        <div class="player-artist" id="ui-artist">--</div>
+      </div>
+      <div id="toggle-icon" onclick="togglePlayerMode()" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 20px; cursor: pointer; padding: 5px;">🔽</div>
     </div>
 
     <div class="progress-wrapper">
@@ -66,11 +69,11 @@
 
     <div class="controls">
       <button class="ctrl-btn" id="shuffle-btn" onclick="toggleShuffle()">🔀</button>
-      <button class="ctrl-btn" onclick="playPrevious()">⏮</button>
+      <button class="ctrl-btn" id="prev-btn" onclick="playPrevious()">⏮</button>
       
       <button class="ctrl-btn play-pause-btn" id="play-pause-btn" onclick="togglePlay()">▶</button>
       
-      <button class="ctrl-btn" onclick="playNext()">⏭</button>
+      <button class="ctrl-btn" id="next-btn" onclick="playNext()">⏭</button>
       <button class="ctrl-btn" id="repeat-btn" onclick="toggleRepeat()">🔁</button>
     </div>
 

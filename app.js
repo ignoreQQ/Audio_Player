@@ -273,4 +273,19 @@ function updateMediaSession(song) {
   }
 }
 
+// ==========================================
+// 7. 迷你播放器切換
+// ==========================================
+function togglePlayerMode() {
+  globalPlayer.classList.toggle('mini-mode');
+  const icon = document.getElementById('toggle-icon');
+  
+  if (globalPlayer.classList.contains('mini-mode')) {
+    icon.innerText = '🔼'; // 縮小時變成向上箭頭，提示可以展開
+  } else {
+    icon.innerText = '🔽'; // 展開時變成向下箭頭
+  }
+}
+
 initSettings();
+
