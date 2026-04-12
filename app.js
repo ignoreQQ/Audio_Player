@@ -51,28 +51,28 @@ const allSongs = [
   },
   {
     id: "T1", title: "壞蛋", artist: "糜先生 Mixer", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/壞蛋.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/壞蛋.json"
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/壞蛋.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/壞蛋.json"
   },
   {
     id: "T2", title: "笨蛋", artist: "糜先生 Mixer", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/笨蛋.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/笨蛋.json"
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/笨蛋.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/笨蛋.json"
   },
   {
     id: "T3", title: "嗜愛動物", artist: "糜先生 Mixer", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/嗜愛動物.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/嗜愛動物.json"
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/嗜愛動物.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/嗜愛動物.json"
   },
   {
     id: "T4", title: "長成什麼樣子算愛情", artist: "糜先生 Mixer", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/長成什麼樣子算愛情.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/長成什麼樣子算愛情.json"
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/長成什麼樣子算愛情.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/長成什麼樣子算愛情.json"
   },
   {
     id: "T5", title: "水星記", artist: "郭頂", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/水星記.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/水星記.json"
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/水星記.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/水星記.json"
   }      
 ];
 
