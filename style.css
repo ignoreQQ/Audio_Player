@@ -1,78 +1,136 @@
-/* 隱藏/顯示視圖 */
-.view { display: none; }
+/* === 1. 全域與底層設定 (Global Settings) === */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0; padding: 0;
+  background: linear-gradient(-45deg, #e0eafc, #cfdef3, #e8f5e9, #f3e5f5);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: #1d1d1f;
+  padding-bottom: 260px; 
+  overflow-x: hidden;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 玻璃態面板通用樣式 */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* === 2. 視圖與導覽 === */
+.view { display: none; padding: 20px; }
 .view.active { display: block; }
 
-/* 主畫面按鈕 */
-.menu-btn {
-  display: block;
-  width: 80%;
-  margin: 20px auto;
-  padding: 15px;
-  font-size: 18px;
-  background-color: #007aff;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
+.header { display: flex; align-items: center; margin-bottom: 20px; }
+.back-btn { 
+  padding: 10px 15px; border: none; border-radius: 15px; 
+  background: rgba(255,255,255,0.5); cursor: pointer; font-weight: bold; 
 }
-.menu-btn.favorite-btn { background-color: #ff2d55; }
 
-/* 搜尋框與清單 */
-#search-input {
-  width: 90%;
-  margin: 10px 5%;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
+/* 主畫面液態按鈕 */
+.liquid-btn {
+  display: block; width: 85%; margin: 20px auto; padding: 18px;
+  font-size: 18px; font-weight: 600; color: #1d1d1f;
+  border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  cursor: pointer; transition: all 0.3s ease;
+  text-align: center;
 }
+.liquid-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.6); }
+
+/* === 3. 曲庫與搜尋 === */
+#search-input {
+  width: 100%; padding: 15px; font-size: 16px; border-radius: 15px;
+  border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.5);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); margin-bottom: 20px; 
+  outline: none; box-sizing: border-box;
+}
+
 #song-list { list-style: none; padding: 0; margin: 0; }
 .song-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 20px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px; margin-bottom: 12px; border-radius: 20px; 
+  cursor: pointer; transition: 0.2s;
 }
-.fav-icon { font-size: 24px; color: #ccc; }
+.song-item:active { transform: scale(0.98); }
+
+.fav-icon { font-size: 24px; color: rgba(0,0,0,0.2); padding: 10px; }
 .fav-icon.active { color: #ff2d55; }
 
-/* 音量控制區塊 */
-.volume-container { 
-  display: flex; justify-content: center; align-items: center; 
-  gap: 10px; margin-top: 15px; padding: 0 10%; 
+/* === 4. 歌詞顯示區 === */
+#lyrics-container {
+  padding: 20px;
+  margin-bottom: 60px; 
 }
-#volume-icon { font-size: 18px; cursor: pointer; width: 24px; text-align: center; }
-#volume-bar { height: 4px; flex-grow: 0.8; }
 
-/* === 播放控制按鈕區 (自適應防跑版) === */
-.controls { 
-  display: flex; 
-  justify-content: space-between;
-  align-items: center; 
-  width: 100%;
-  max-width: 360px; 
-  margin: 0 auto 10px auto;
-  padding: 0 10px;
-  box-sizing: border-box;
+.lyric-line { 
+  margin: 35px 0; padding-left: 10px; opacity: 0.4;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  cursor: pointer; 
 }
+.lyric-line.active { opacity: 1; transform: translateX(15px) scale(1.05); }
+
+/* Furigana設定 */
+ruby { font-size: 24px; font-weight: bold; margin-right: 5px; }
+rt { font-size: 12px; color: #007aff; }
+
+.translation { font-size: 16px; margin-top: 8px; transition: opacity 0.3s; }
+.translation.hidden { display: none; }
+
+/* === 5. 全域播放器 (Global Player) === */
+#global-player {
+  position: fixed; bottom: 0; left: 0; width: 100%;
+  padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); 
+  box-sizing: border-box;
+  border-top-left-radius: 30px; border-top-right-radius: 30px;
+  z-index: 1000;
+}
+
+.player-info { text-align: center; margin-bottom: 12px; cursor: pointer; }
+.player-title { font-weight: bold; font-size: 16px; display: block; }
+.player-artist { font-size: 12px; color: #666; }
+
+/* 播放控制項 */
+.controls { 
+  display: flex; justify-content: center; align-items: center; 
+  gap: 12px; margin-bottom: 10px; 
+}
+
 .ctrl-btn {
-  background: none; border: none; font-size: 22px; color: #1d1d1f; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  width: 40px; height: 40px; border-radius: 50%; transition: 0.2s;
-  padding: 0;
+  background: none; border: none; font-size: 20px; color: #1d1d1f; 
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 50%; transition: 0.2s;
 }
 .ctrl-btn:active { background: rgba(0,0,0,0.1); }
+#repeat-btn.active { color: #007aff; transform: scale(1.1); }
+
 .play-pause-btn { 
-  font-size: 32px; width: 55px; height: 55px; 
+  font-size: 28px; width: 52px; height: 52px; 
   background: rgba(255,255,255,0.8); box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-  flex-shrink: 0;
 }
 
-.translation {
-  transition: opacity 0.3s;
+/* 進度條與音量條 (Sliders) */
+.progress-container, .volume-container { 
+  display: flex; align-items: center; gap: 10px; 
+  font-size: 12px; font-family: monospace; color: #555; 
 }
-.translation.hidden {
-  display: none;
+.volume-container { justify-content: center; margin-top: 10px; padding: 0 10%; }
+
+input[type=range] {
+  flex-grow: 1; -webkit-appearance: none; height: 4px; border-radius: 2px;
+  background: rgba(0,0,0,0.1); outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 14px; height: 14px;
+  border-radius: 50%; background: #1d1d1f; cursor: pointer;
 }
