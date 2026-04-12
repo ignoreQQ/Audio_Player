@@ -1,12 +1,13 @@
 /* === 0. 全域變數 (CSS Variables) === */
+
 :root {
-  /* 預設歌詞大小為 24px */
   --lyric-font-size: 24px;
   --lyric-ruby-size: 12px;
   --lyric-trans-size: 16px;
 }
 
 /* === 1. 全域與底層設定 (Global Settings) === */
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0; padding: 0;
@@ -23,8 +24,6 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
-/* 玻璃態面板通用樣式 */
 .glass-panel {
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(20px);
@@ -36,7 +35,7 @@ body {
 ruby { 
   font-size: var(--lyric-font-size); 
   font-weight: bold; margin-right: 5px; 
-  transition: font-size 0.2s; /* 讓字體變大變小時有滑順動畫 */
+  transition: font-size 0.2s; 
 }
 rt { 
   font-size: var(--lyric-ruby-size); 
@@ -49,6 +48,7 @@ rt {
 }
 
 /* === 2. 視圖與導覽 === */
+
 .view { display: none; padding: 20px; }
 .view.active { display: block; }
 .header { display: flex; align-items: center; margin-bottom: 20px; }
@@ -67,26 +67,26 @@ rt {
   text-align: center;
 }
 .liquid-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.6); }
-/* ====== 歌詞頁面：懸浮返回按鈕 ====== */
+
+/* ====== 歌詞頁面：返回按鈕 ====== */
+
 #player-view .header {
   position: sticky;
-  /* 距離頂部留一點空隙，並支援 iPhone 瀏海與動態島的安全距離 */
   top: calc(15px + env(safe-area-inset-top)); 
-  z-index: 500; /* 確保它會浮在歌詞的上面 */
+  z-index: 500;
   
-  /* 為了讓滑動時視覺更乾淨，我們可以稍微調整對齊 */
   display: flex;
   align-items: flex-start;
-  pointer-events: none; /* 讓 header 空白處不會阻擋到後面歌詞的點擊 */
+  pointer-events: none;
 }
 
-/* 重新把按鈕的點擊事件打開，並加上一點陰影讓懸浮感更明顯 */
 #player-view .back-btn {
   pointer-events: auto;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* === 3. 曲庫與搜尋 === */
+
 #search-input {
   width: 100%; padding: 15px; font-size: 16px; border-radius: 15px;
   border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.5);
@@ -102,7 +102,9 @@ rt {
 .song-item:active { transform: scale(0.98); }
 .fav-icon { font-size: 24px; color: rgba(0,0,0,0.2); padding: 10px; }
 .fav-icon.active { color: #ff2d55; }
+
 /* === 曲庫分類標籤 === */
+
 .category-tabs {
   display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto;
   padding-bottom: 5px; scrollbar-width: none; /* Firefox 隱藏捲軸 */
@@ -121,6 +123,7 @@ rt {
 }
 
 /* === 4. 歌詞顯示區 === */
+
 #lyrics-container { padding: 20px; margin-bottom: 60px; }
 .lyric-line { 
   margin: 35px 0; padding: 0 20px; opacity: 0.4;
@@ -129,28 +132,25 @@ rt {
   cursor: pointer; 
 }
 .lyric-line.active { opacity: 1; transform: scale(1.05); }
-
-/* 🌟 已經把寫死的 ruby, rt, .translation 刪除，讓最上面的變數發揮作用！ */
-
 .translation.hidden { display: none; }
 
-/* === 5. 全域播放器 (Global Player) 極致穩定版 === */
+/* === 5. 全域播放器 === */
+
 #global-player {
   position: fixed;
   bottom: 20px; 
   left: 50%;
   transform: translateX(-50%); 
   width: 92%; 
-  max-width: 400px; /* 死死鎖住最大寬度 */
+  max-width: 400px;
   
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); 
   box-sizing: border-box;
   border-radius: 25px; 
   z-index: 1000;
-  display: none; /* 由 JS 加上 class 來顯示 */
+  display: none;
 }
 
-/* 🌟 關鍵修復：用 class 控制顯示，並使用 block 讓內容自然由上往下排，永不爆開 */
 #global-player.active-player {
   display: block; 
 }
@@ -186,7 +186,7 @@ rt {
 }
 .play-pause-btn:active { transform: scale(0.95); }
 
-/* 音量區塊 */
+/* 音量控制 */
 .volume-container { display: flex; justify-content: center; align-items: center; gap: 10px; }
 #volume-icon { font-size: 18px; width: 24px; text-align: center; cursor: pointer; }
 #volume-bar { flex-grow: 1; max-width: 200px; margin: 0; }
@@ -201,10 +201,11 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 /* ====== 迷你播放器模式 (Mini Mode) ====== */
+
 #global-player.active-player.mini-mode {
   display: grid !important;
-  grid-template-columns: auto auto 1fr; /* 播放鍵 | 下一首 | 進度條 */
-  grid-template-rows: auto auto;        /* 歌名行 | 控制行 */
+  grid-template-columns: auto auto 1fr; 
+  grid-template-rows: auto auto; 
   gap: 5px 12px;
   padding: 15px 20px calc(15px + env(safe-area-inset-bottom));
 }
@@ -227,7 +228,7 @@ input[type=range]::-webkit-slider-thumb {
   position: static !important; transform: none !important; padding: 0 !important;
 }
 
-/* 隱藏不需要的元素 (歌手、時間數字、音量、隨機/重複/上一首) */
+/* 隱藏元素 (歌手、時間數字、音量、隨機/重複/上一首) */
 #global-player.mini-mode .player-artist,
 #global-player.mini-mode .time-labels,
 #global-player.mini-mode .volume-container,
@@ -261,7 +262,8 @@ input[type=range]::-webkit-slider-thumb {
 }
 #global-player.mini-mode .ctrl-btn { width: 35px; height: 35px; }
 
-/* ====== 6. UI 元件 (Toggle Switch) ====== */
+/* ====== 6. UI 元件 ====== */
+
 .switch {
   position: relative;
   display: inline-block;
