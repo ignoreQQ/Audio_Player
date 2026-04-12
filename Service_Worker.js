@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lyric-player-v2'; // 每次大更新就改一下這個名字 (v1 -> v2)
+const CACHE_NAME = 'lyric-player-v3'; // 每次大更新就改一下這個名字 (v1 -> v2)
 const ASSETS = [
   './',
   './index.html',

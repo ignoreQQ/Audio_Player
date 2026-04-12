@@ -29,23 +29,64 @@
       <h1 style="font-size: 32px; letter-spacing: 2px;">🎵<br>日文歌學習</h1>
     </div>
     <div class="menu-container">
-      <button class="liquid-btn" onclick="showLibrary(false)">進入曲庫 (全部歌曲)</button>
-      <button class="liquid-btn" onclick="showLibrary(true)">我的收藏 🤍</button>
+      <button class="liquid-btn" onclick="showLibrary('all')">1. 進入曲庫</button>
+      <button class="liquid-btn favorite-btn" style="background: rgba(255, 45, 85, 0.15);" onclick="showLibrary('favorites')">2. 我的收藏 🤍</button>
+      <button class="liquid-btn" style="margin-top: 30px; background: rgba(0,0,0,0.05);" onclick="showSettings()">3. 系統設定 ⚙️</button>
+    </div>
+  </div>
+
+  <div id="settings-view" class="view">
+    <div class="header">
+      <button class="back-btn glass-panel" onclick="showHome()">❮ 返回</button>
+      <h2 style="margin:0 0 0 15px;">系統設定</h2>
+    </div>
+    
+    <div class="glass-panel" style="padding: 20px; border-radius: 20px; margin-top: 20px;">
+      <h3 style="margin-top: 0;">歌詞字體大小</h3>
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <span style="font-size: 14px;">小</span>
+        <input type="range" id="font-size-slider" min="16" max="40" value="24" style="flex-grow: 1;" oninput="changeFontSize(this.value)">
+        <span style="font-size: 24px;">大</span>
+      </div>
+      <p style="text-align: center; color: #666; font-size: 12px;">拖曳拉桿可即時預覽大小</p>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px;">
+        <h3 style="margin: 0;">顯示中文翻譯</h3>
+        <label class="switch">
+          <input type="checkbox" id="translation-toggle" onchange="toggleTranslationSetting(this.checked)" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="lyric-line active" style="opacity: 1; padding: 15px; background: rgba(255,255,255,0.5); border-radius: 10px; margin-top: 15px;">
+        <div><ruby>漢字<rt>かんじ</rt></ruby>預覽</div>
+        <div class="translation" style="display: block;">這是中文翻譯預覽</div>
+      </div>
     </div>
   </div>
 
   <div id="library-view" class="view">
     <div class="header">
       <button class="back-btn glass-panel" onclick="showHome()">❮ 返回</button>
-      <h2 id="library-title" style="margin:0 0 0 15px;">全部歌曲</h2>
+      <h2 id="library-title" style="margin:0 0 0 15px;">曲庫</h2>
     </div>
+    
     <input type="text" id="search-input" placeholder="🔍 搜尋歌名或歌手..." onkeyup="filterSongs()">
+
+    <div class="category-tabs" id="category-tabs">
+      <button class="cat-btn active" data-cat="all" onclick="changeCategory('all')">全部</button>
+      <button class="cat-btn" data-cat="日文" onclick="changeCategory('日文')">🇯🇵 日文</button>
+      <button class="cat-btn" data-cat="華語" onclick="changeCategory('華語')">🇹🇼 華語</button>
+      <button class="cat-btn" data-cat="英語" onclick="changeCategory('英語')">🇺🇸 英語</button>
+      <button class="cat-btn" data-cat="其他" onclick="changeCategory('其他')">🎸 其他</button>
+    </div>
+
     <ul id="song-list"></ul>
   </div>
 
   <div id="player-view" class="view">
     <div class="header">
-      <button class="back-btn glass-panel" onclick="showLibrary(currentIsFavorites)">❮ 返回清單</button>
+      <button class="back-btn glass-panel" onclick="showLibrary(currentCategory === 'favorites' ? 'favorites' : 'all')">❮ 返回清單</button>
     </div>
     <div id="lyrics-container">請先選擇一首歌曲</div>
   </div>

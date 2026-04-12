@@ -12,7 +12,7 @@ const volumeBar = document.getElementById('volume-bar');
 const volumeIcon = document.getElementById('volume-icon');
 const repeatBtn = document.getElementById('repeat-btn');
 
-let currentIsFavorites = false;
+let currentCategory = 'all'; // 統一使用 currentCategory 管理狀態
 let favoriteIds = JSON.parse(localStorage.getItem('myFavSongs')) || [];
 let currentSongIndexInList = 0;
 let currentPlaylist = [];
@@ -30,44 +30,26 @@ let speedIndex = 1;
 // ==========================================
 const allSongs = [
   { 
-  id: "s1", 
-  title: "Lemon", 
-  artist: "米津玄師", 
-  audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", 
-  lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" 
+    id: "N1", title: "Lemon", artist: "米津玄師", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" 
   },
-  { id: "s2", 
-    title: "ベテルギウス", 
-    artist: "優里Yuuri", 
+  { 
+    id: "N2", title: "ベテルギウス", artist: "優里Yuuri", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3", 
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json" 
   },
-  { id: "s3", 
-    title: "Teacher", 
-    artist: "友成空", 
+  { 
+    id: "N3", title: "Teacher", artist: "友成空", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Teacher.mp3", 
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json" 
   },
   { 
-    id: "s4",
-    title: "バイバイ YESTERDAY", 
-    artist: "3年E組", 
+    id: "N4", title: "バイバイ YESTERDAY", artist: "3年E組", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/バイバイ YESTERDAY.mp3", 
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/バイバイ YESTERDAY.json" 
-  },
-
+  }
 ];
-/*
-範本
-{ 
-    id: "",
-    title: "歌名", 
-    artist: "歌手名", 
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/歌名.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/歌詞.json" 
-},
-*/
-
 
 // ==========================================
 // 3. 視圖切換
@@ -76,20 +58,39 @@ function hideAllViews() {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 }
 
-function showHome() { hideAllViews(); document.getElementById('home-view').classList.add('active'); }
-
-function showLibrary(onlyFavorites) {
-  hideAllViews();
-  currentIsFavorites = onlyFavorites;
-  document.getElementById('library-view').classList.add('active');
-  document.getElementById('library-title').innerText = onlyFavorites ? "我的收藏" : "全部歌曲";
-  document.getElementById('search-input').value = "";
-  renderSongList();
+function showHome() { 
+  hideAllViews(); 
+  document.getElementById('home-view').classList.add('active'); 
 }
 
-function showPlayerView() {
+function showSettings() {
   hideAllViews();
-  document.getElementById('player-view').classList.add('active');
+  document.getElementById('settings-view').classList.add('active');
+}
+
+function showLibrary(mode) {
+  hideAllViews();
+  document.getElementById('library-view').classList.add('active');
+  document.getElementById('search-input').value = "";
+  
+  if (mode === 'favorites') {
+    document.getElementById('library-title').innerText = "我的收藏 🤍";
+    document.getElementById('category-tabs').style.display = 'none'; 
+    currentCategory = 'favorites';
+    renderSongList();
+  } else {
+    document.getElementById('library-title').innerText = "曲庫";
+    document.getElementById('category-tabs').style.display = 'flex'; 
+    changeCategory(mode === 'all' ? 'all' : mode); 
+  }
+}
+
+function changeCategory(category) {
+  currentCategory = category;
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === category);
+  });
+  renderSongList();
 }
 
 function renderSongList(searchQuery = "") {
@@ -97,7 +98,8 @@ function renderSongList(searchQuery = "") {
   listContainer.innerHTML = ''; 
 
   currentPlaylist = allSongs.filter(song => {
-    if (currentIsFavorites && !favoriteIds.includes(song.id)) return false;
+    if (currentCategory === 'favorites' && !favoriteIds.includes(song.id)) return false;
+    if (currentCategory !== 'all' && currentCategory !== 'favorites' && song.category !== currentCategory) return false;
     const query = searchQuery.toLowerCase();
     return song.title.toLowerCase().includes(query) || song.artist.toLowerCase().includes(query);
   });
@@ -112,7 +114,7 @@ function renderSongList(searchQuery = "") {
     li.innerHTML = `
       <div style="flex-grow: 1;" onclick="playSong(${index})">
         <div style="font-size: 18px; font-weight: bold;">${song.title}</div>
-        <div style="font-size: 14px; color: #555;">${song.artist}</div>
+        <div style="font-size: 14px; color: #555;">${song.artist} <span style="background:#eee; padding:2px 6px; border-radius:10px; font-size:10px; margin-left:5px;">${song.category || '未分類'}</span></div>
       </div>
       <div class="${starClass}" onclick="toggleFavorite('${song.id}', event)">${starSymbol}</div>
     `;
@@ -142,6 +144,9 @@ function playSong(index) {
   document.getElementById('ui-artist').innerText = song.artist;
   
   globalPlayer.classList.add('active-player');
+  // 自動進入迷你模式以免擋住歌詞
+  globalPlayer.classList.add('mini-mode'); 
+  document.getElementById('toggle-icon').innerText = '🔼'; 
   
   showPlayerView(); 
   
@@ -152,6 +157,11 @@ function playSong(index) {
   playPauseBtn.innerText = '⏸';
 
   updateMediaSession(song);
+}
+
+function showPlayerView() {
+  hideAllViews();
+  document.getElementById('player-view').classList.add('active');
 }
 
 function togglePlay() {
@@ -188,15 +198,6 @@ function skipTime(seconds) { audioPlayer.currentTime += seconds; }
 // ==========================================
 // 5. 音量與進度條監聽
 // ==========================================
-function initSettings() {
-  let savedVolume = localStorage.getItem('mySavedVolume');
-  if (savedVolume !== null) {
-    audioPlayer.volume = parseFloat(savedVolume);
-    volumeBar.value = audioPlayer.volume * 100;
-    updateVolumeIcon(audioPlayer.volume);
-  }
-}
-
 volumeBar.addEventListener('input', (e) => {
   const vol = e.target.value / 100;
   audioPlayer.volume = vol;
@@ -204,14 +205,26 @@ volumeBar.addEventListener('input', (e) => {
   updateVolumeIcon(vol);
 });
 
-// ...前面的音量邏輯...
+function toggleMute() {
+  if (audioPlayer.volume > 0) {
+    audioPlayer.dataset.lastVol = audioPlayer.volume;
+    audioPlayer.volume = 0;
+    volumeBar.value = 0;
+  } else {
+    const restoreVol = audioPlayer.dataset.lastVol || 1;
+    audioPlayer.volume = restoreVol;
+    volumeBar.value = restoreVol * 100;
+  }
+  localStorage.setItem('mySavedVolume', audioPlayer.volume);
+  updateVolumeIcon(audioPlayer.volume);
+}
+
 function updateVolumeIcon(vol) {
   if (vol === 0) volumeIcon.innerText = '🔇';
   else if (vol < 0.5) volumeIcon.innerText = '🔉';
   else volumeIcon.innerText = '🔊';
 }
 
-// 🌟 改用 durationchange，對網路串流音檔支援度最好
 audioPlayer.addEventListener('durationchange', () => {
   if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
     timeTotalLabel.innerText = formatTime(audioPlayer.duration);
@@ -239,7 +252,6 @@ audioPlayer.addEventListener('timeupdate', () => {
     else { playNext(); }
   }
   
-  // 🌟 雙重保險：確保音樂播放時能確實更新總長度與進度條
   if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
     if (timeTotalLabel.innerText === "0:00") {
       timeTotalLabel.innerText = formatTime(audioPlayer.duration);
@@ -252,7 +264,6 @@ audioPlayer.addEventListener('timeupdate', () => {
     }
   }
 
-  // 歌詞同步處理
   const activeIndex = lyricsData.findLastIndex(line => audioPlayer.currentTime >= line.startTime);
   if (activeIndex !== currentLineIndex && activeIndex !== -1) {
     const oldLine = document.getElementById(`line-${currentLineIndex}`);
@@ -265,10 +276,10 @@ audioPlayer.addEventListener('timeupdate', () => {
     }
   }
 });
+
 // ==========================================
 // 6. 輔助功能
 // ==========================================
-
 function formatTime(seconds) {
   if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
   const m = Math.floor(seconds / 60);
@@ -277,7 +288,7 @@ function formatTime(seconds) {
 }
 
 async function fetchLyrics(url) {
-  lyricsContainer.innerHTML = '歌詞載入中...';
+  lyricsContainer.innerHTML = '<div style="text-align:center; color:#888;">歌詞載入中...</div>';
   currentLineIndex = -1;
   try {
     const response = await fetch(url);
@@ -288,7 +299,8 @@ async function fetchLyrics(url) {
       lineDiv.className = 'lyric-line';
       lineDiv.id = `line-${index}`;
       let wordsHTML = line.words.map(w => `<ruby>${w.text}<rt>${w.furigana || ''}</rt></ruby>`).join('');
-      lineDiv.innerHTML = `<div>${wordsHTML}</div><div class="translation">${line.translation}</div>`;
+      const hiddenClass = showTranslation ? '' : 'hidden';
+      lineDiv.innerHTML = `<div>${wordsHTML}</div><div class="translation ${hiddenClass}">${line.translation}</div>`;
       lineDiv.onclick = () => { audioPlayer.currentTime = line.startTime + 0.01; audioPlayer.play(); };
       lyricsContainer.appendChild(lineDiv);
     });
@@ -316,11 +328,57 @@ function togglePlayerMode() {
   const icon = document.getElementById('toggle-icon');
   
   if (globalPlayer.classList.contains('mini-mode')) {
-    icon.innerText = '🔼'; // 縮小時變成向上箭頭，提示可以展開
+    icon.innerText = '🔼'; 
   } else {
-    icon.innerText = '🔽'; // 展開時變成向下箭頭
+    icon.innerText = '🔽'; 
   }
 }
 
-initSettings();
+// ==========================================
+// 8. 系統設定 (合併音量與字體大小記憶)
+// ==========================================
+function changeFontSize(baseSize) {
+  const size = parseInt(baseSize);
+  document.documentElement.style.setProperty('--lyric-font-size', size + 'px');
+  document.documentElement.style.setProperty('--lyric-ruby-size', Math.max(10, size * 0.5) + 'px');
+  document.documentElement.style.setProperty('--lyric-trans-size', Math.max(12, size * 0.65) + 'px');
+  
+  localStorage.setItem('myLyricFontSize', size); 
+}
+function initSettings() {
+  // 1. 讀取音量設定
+  let savedVolume = localStorage.getItem('mySavedVolume');
+  if (savedVolume !== null) {
+    audioPlayer.volume = parseFloat(savedVolume);
+    volumeBar.value = audioPlayer.volume * 100;
+    updateVolumeIcon(audioPlayer.volume);
+  }
 
+  // 2. 讀取字體大小設定
+  let savedFontSize = localStorage.getItem('myLyricFontSize');
+  if (savedFontSize) {
+    document.getElementById('font-size-slider').value = savedFontSize;
+    changeFontSize(savedFontSize);
+  }
+
+  // 🌟 3. 讀取翻譯顯示設定
+  let savedTranslation = localStorage.getItem('myShowTranslation');
+  if (savedTranslation !== null) {
+    showTranslation = (savedTranslation === 'true'); // localStorage 存的是字串
+    document.getElementById('translation-toggle').checked = showTranslation;
+    toggleTranslationSetting(showTranslation); // 套用到畫面上
+  }
+}
+
+function toggleTranslationSetting(isChecked) {
+  showTranslation = isChecked;
+  localStorage.setItem('myShowTranslation', isChecked); // 記憶到手機端
+  
+  // 立即更新畫面上所有的翻譯區塊 (包含預覽區塊和歌詞區塊)
+  document.querySelectorAll('.translation').forEach(el => {
+    el.classList.toggle('hidden', !showTranslation);
+  });
+}
+
+// 執行初始化
+initSettings();
