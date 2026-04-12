@@ -93,7 +93,7 @@ rt { font-size: 12px; color: #007aff; }
 .translation { font-size: 16px; margin-top: 8px; transition: opacity 0.3s; }
 .translation.hidden { display: none; }
 
-/* === 5. 全域播放器 (Global Player) === */
+/* === 5. 全域播放器 (Global Player) 排版修正 === */
 #global-player {
   position: fixed;
   bottom: 20px; 
@@ -101,87 +101,77 @@ rt { font-size: 12px; color: #007aff; }
   transform: translateX(-50%); 
   width: 92%; 
   max-width: 400px; 
+  
+  /* 關鍵修正：確保內部元件是「由上而下」垂直排列 */
+  display: flex !important; 
+  flex-direction: column !important; 
+  
   padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); 
   box-sizing: border-box;
   border-radius: 25px; 
   z-index: 1000;
-  display: none; 
+  gap: 12px; /* 讓每個區塊之間有固定間距 */
 }
 
-.player-info { text-align: center; margin-bottom: 15px; cursor: pointer; }
-.player-title { font-weight: bold; font-size: 16px; }
-.player-artist { font-size: 12px; color: #666; }
+/* 確保所有子區塊都撐滿寬度，才不會縮在左邊 */
+.player-info, .progress-wrapper, .controls, .volume-container {
+  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
 
-/* === 進度條專屬排版 (完美還原圖片) === */
+/* --- 進度條區塊修正 --- */
 .progress-wrapper {
-  margin-bottom: 15px;
+  margin: 5px 0;
 }
+
 #progress-bar {
-  width: 100%;
-  margin: 0;
+  width: 100% !important;
+  margin: 0 0 8px 0 !important; /* 讓進度條在上面，時間在下面 */
 }
+
 .time-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  font-family: monospace;
-  color: #555;
-  margin-top: 8px; /* 讓時間與進度條保持一點距離 */
-}
-
-/* === 控制按鈕排版 === */
-.controls { 
-  display: flex; 
-  justify-content: space-between; /* 讓 5 個按鈕均勻散開 */
-  align-items: center; 
   width: 100%;
-  padding: 0 10px;
-  box-sizing: border-box;
-  margin-bottom: 10px;
+  font-size: 11px;
+  color: #555;
+  font-family: monospace;
 }
 
-.ctrl-btn {
-  background: none; border: none; 
-  font-size: 20px; color: #1d1d1f; 
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  width: 40px; height: 40px;
-  flex-shrink: 0; 
-  opacity: 0.8; /* 預設稍微半透明 */
-}
-#repeat-btn.active, #shuffle-btn.active { 
-  opacity: 1; 
-  color: #007aff; /* 啟用時變成藍色 */
+/* --- 按鈕控制列修正 --- */
+.controls {
+  flex-direction: row !important; /* 按鈕要橫著排 */
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5px;
 }
 
-/* === 核心：顯眼的純白大播放鍵 === */
+/* --- 經典大白播放鍵 --- */
 .play-pause-btn { 
-  font-size: 24px; 
-  width: 64px;  /* 尺寸加大 */
-  height: 64px; /* 尺寸加大 */
-  background: #ffffff; /* 純白底色 */
-  color: #000000; /* 黑色圖標 */
-  border-radius: 50%; /* 完美的圓形 */
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
-  opacity: 1; /* 覆蓋掉預設的半透明 */
-  transition: transform 0.1s;
-}
-.play-pause-btn:active {
-  transform: scale(0.95);
+  font-size: 24px !important; 
+  width: 60px !important; 
+  height: 60px !important; 
+  background: #ffffff !important; /* 確保是純白底 */
+  color: #000 !important; /* 黑色圖示 */
+  border-radius: 50% !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
 }
 
-/* 音量條 */
-.volume-container { 
-  display: flex; align-items: center; gap: 10px; 
-  justify-content: center; margin-top: 10px; padding: 0 10%; 
+/* --- 音量區塊修正 --- */
+.volume-container {
+  flex-direction: row !important; /* 音量圖示跟條橫著排 */
+  justify-content: center;
+  gap: 10px;
+  margin-top: 5px;
 }
-#volume-icon { font-size: 18px; cursor: pointer; width: 24px; text-align: center; }
-input[type=range] {
-  -webkit-appearance: none; height: 4px; border-radius: 2px;
-  background: rgba(0,0,0,0.1); outline: none;
+
+#volume-bar {
+  flex-grow: 0.8;
+  max-width: 200px;
 }
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; width: 14px; height: 14px;
-  border-radius: 50%; background: #1d1d1f; cursor: pointer;
-}
-#volume-bar { flex-grow: 1; }
