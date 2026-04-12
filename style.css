@@ -76,41 +76,45 @@ rt { font-size: 12px; color: #007aff; }
 .translation { font-size: 16px; margin-top: 8px; transition: opacity 0.3s; }
 .translation.hidden { display: none; }
 
-/* === 5. 全域播放器 (Global Player) === */
+/* === 5. 全域播放器 (Global Player) 終極穩定版 === */
 #global-player {
-  position: fixed;
-  bottom: 20px; 
-  left: 50%;
-  transform: translateX(-50%); 
-  width: 92%; 
-  max-width: 400px; 
+  position: fixed !important;
+  bottom: 20px !important; 
+  left: 50% !important;
+  transform: translateX(-50%) !important; 
+  width: 92% !important; 
+  max-width: 400px !important; /* 鎖死最大寬度，解決電腦版變形 */
   
-  display: none; /* 初始隱藏，由 js 控制顯示為 flex */
-  flex-direction: column; 
+  display: none; /* 由 JS 控制顯示 */
+  flex-direction: column !important; /* 強制垂直排列 */
   
-  padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); 
-  box-sizing: border-box;
-  border-radius: 25px; 
-  z-index: 1000;
-  gap: 12px; 
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom)) !important; 
+  box-sizing: border-box !important;
+  border-radius: 25px !important; 
+  z-index: 1000 !important;
 }
 
-.player-info, .progress-wrapper, .controls, .volume-container {
-  width: 100%; display: flex; flex-direction: column;
-}
+/* 確保所有子區塊都是 Block，不會互相擠壓 */
+.player-info { width: 100%; text-align: center; margin-bottom: 15px; cursor: pointer; display: block !important; }
+.player-title { font-weight: bold; font-size: 16px; margin-bottom: 4px; }
+.player-artist { font-size: 12px; color: #666; }
 
-.player-info { align-items: center; cursor: pointer; }
-.progress-wrapper { margin: 5px 0; }
-#progress-bar { width: 100%; margin: 0 0 8px 0; }
+.progress-wrapper { width: 100%; display: block !important; margin-bottom: 15px; }
+#progress-bar { width: 100%; margin: 0 0 8px 0; display: block; }
 
 .time-labels {
-  display: flex; flex-direction: row; justify-content: space-between;
-  width: 100%; font-size: 11px; color: #555; font-family: monospace;
+  display: flex !important; 
+  flex-direction: row !important; 
+  justify-content: space-between !important;
+  width: 100%; font-size: 11px; color: #888; font-family: monospace;
 }
 
 .controls {
-  flex-direction: row; justify-content: space-between; align-items: center;
-  padding: 0 5px;
+  display: flex !important; 
+  flex-direction: row !important; 
+  justify-content: space-between !important; 
+  align-items: center !important;
+  width: 100%; padding: 0; margin-bottom: 10px;
 }
 
 .ctrl-btn {
@@ -121,21 +125,23 @@ rt { font-size: 12px; color: #007aff; }
 #repeat-btn.active, #shuffle-btn.active { opacity: 1; color: #007aff; }
 
 .play-pause-btn { 
-  font-size: 24px; width: 60px; height: 60px; 
-  background: #ffffff; color: #000; border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 1;
+  font-size: 24px !important; width: 64px !important; height: 64px !important; 
+  background: #ffffff !important; color: #000 !important; border-radius: 50% !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important; opacity: 1 !important;
 }
-.play-pause-btn:active { transform: scale(0.95); }
+.play-pause-btn:active { transform: scale(0.95) !important; }
 
 .volume-container {
-  flex-direction: row; justify-content: center; align-items: center; gap: 10px; margin-top: 5px;
+  display: flex !important; flex-direction: row !important; 
+  justify-content: center !important; align-items: center !important; 
+  gap: 10px; width: 100%;
 }
-#volume-icon { font-size: 18px; width: 24px; text-align: center; }
-#volume-bar { flex-grow: 0.8; max-width: 200px; margin: 0; }
+#volume-icon { font-size: 18px; width: 24px; text-align: center; cursor: pointer; }
+#volume-bar { flex-grow: 1; max-width: 200px; margin: 0; }
 
 input[type=range] {
   -webkit-appearance: none; height: 4px; border-radius: 2px;
-  background: rgba(0,0,0,0.1); outline: none;
+  background: rgba(0,0,0,0.15); outline: none;
 }
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none; appearance: none; width: 14px; height: 14px;

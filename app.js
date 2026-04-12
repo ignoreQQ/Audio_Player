@@ -170,11 +170,34 @@ volumeBar.addEventListener('input', (e) => {
   updateVolumeIcon(vol);
 });
 
+// ...前面的音量邏輯...
 function updateVolumeIcon(vol) {
   if (vol === 0) volumeIcon.innerText = '🔇';
   else if (vol < 0.5) volumeIcon.innerText = '🔉';
   else volumeIcon.innerText = '🔊';
 }
+
+// 🌟 補回：當音樂資料載入完畢時，更新總時間
+audioPlayer.addEventListener('loadedmetadata', () => {
+  timeTotalLabel.innerText = formatTime(audioPlayer.duration);
+});
+
+// 🌟 補回：使用者拖動進度條時 (畫面時間跟著變，但還沒放開)
+progressBar.addEventListener('input', (e) => {
+  isDragging = true;
+  if (audioPlayer.duration) {
+    const targetTime = (e.target.value / 100) * audioPlayer.duration;
+    timeCurrentLabel.innerText = formatTime(targetTime);
+  }
+});
+
+// 🌟 補回：使用者放開進度條時 (真正改變音樂播放位置)
+progressBar.addEventListener('change', (e) => {
+  isDragging = false;
+  if (audioPlayer.duration) {
+    audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
+  }
+});
 
 audioPlayer.addEventListener('timeupdate', () => {
   if (audioPlayer.ended) { 
@@ -187,6 +210,7 @@ audioPlayer.addEventListener('timeupdate', () => {
     timeCurrentLabel.innerText = formatTime(audioPlayer.currentTime);
   }
 
+  // 歌詞同步
   const activeIndex = lyricsData.findLastIndex(line => audioPlayer.currentTime >= line.startTime);
   if (activeIndex !== currentLineIndex && activeIndex !== -1) {
     const oldLine = document.getElementById(`line-${currentLineIndex}`);
