@@ -51,7 +51,7 @@ const allSongs = [
   { 
     id: "s4",
     title: "バイバイ YESTERDAY", 
-    artist: "歌手名", 
+    artist: "3年E組", 
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/バイバイ YESTERDAY.mp3", 
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/バイバイ YESTERDAY.json" 
   },
