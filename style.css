@@ -45,3 +45,27 @@
 }
 #volume-icon { font-size: 18px; cursor: pointer; width: 24px; text-align: center; }
 #volume-bar { height: 4px; flex-grow: 0.8; }
+
+/* === 修改：播放控制按鈕區 (自適應防跑版) === */
+    .controls { 
+      display: flex; 
+      justify-content: space-between; /* 讓系統自動把間距平均分配，不要死死卡住 */
+      align-items: center; 
+      width: 100%; /* 讓它佔滿播放列寬度 */
+      max-width: 360px; /* 但限制最大寬度，這樣在電腦大螢幕才不會分太開 */
+      margin: 0 auto 10px auto; /* 整個區塊置中 */
+      padding: 0 10px; /* 左右稍微留一點安全距離 */
+      box-sizing: border-box;
+    }
+    .ctrl-btn {
+      background: none; border: none; font-size: 22px; color: #1d1d1f; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 50%; transition: 0.2s;
+      padding: 0;
+    }
+    .ctrl-btn:active { background: rgba(0,0,0,0.1); }
+    .play-pause-btn { 
+      font-size: 32px; width: 55px; height: 55px; 
+      background: rgba(255,255,255,0.8); box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+      flex-shrink: 0; /* 鐵壁防禦：絕對不允許這顆主按鈕被螢幕擠壓變形 */
+    }
