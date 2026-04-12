@@ -234,5 +234,37 @@ function updateMediaSession(song) {
   }
 }
 
+// 打開歌手檔案彈窗
+function openSingerProfile(singerName) {
+  const popup = document.getElementById('singer-profile-popup');
+  const nameLabel = document.getElementById('popup-singer-name');
+  const titleLabel = document.getElementById('popup-singer-title');
+  const bioLabel = document.getElementById('popup-singer-bio');
+
+  // 這裡需要根據不同歌手名稱載入不同的資料
+  // 你可以建立一個字典檔或從 allSongs 中抓取
+  if (singerName === "米津玄師") {
+    nameLabel.innerText = "米津玄師";
+    titleLabel.innerText = "日本シンガーソングライター";
+    bioLabel.innerText = "1991年生まれ。2009年よりボカロPとして活動を開始。代表作に『Lemon』、『パプリカ』など。";
+  } else if (singerName === "優里Yuuri") {
+    nameLabel.innerText = "優里Yuuri";
+    titleLabel.innerText = "多声、多彩な表現力を持つシンガー";
+    bioLabel.innerText = "「ドライフラワー」がSNSを中心に大ヒット。力強い歌声が特徴。";
+  }
+  // ... 其他歌手以此類推
+
+  popup.classList.add('active');
+}
+
+// 關閉歌手檔案彈窗
+function closeSingerProfile() {
+  document.getElementById('singer-profile-popup').classList.remove('active');
+}
+
+// 可選：點擊遮罩層外部也關閉彈窗
+document.getElementById('singer-profile-popup').addEventListener('click', (e) => {
+  if (e.target.id === 'singer-profile-popup') closeSingerProfile();
+});
 // 啟動初始化
 initSettings();

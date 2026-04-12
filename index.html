@@ -195,7 +195,46 @@
       <input type="range" id="volume-bar" value="100" max="100">
     </div>
   </div>
+  <div id="singer-profile-popup" class="profile-popup-overlay">
+  <div class="profile-card glass-panel">
+    
+    <div class="card-cover">
+      <img src="https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3.png" alt="Singer Cover" class="cover-photo">
+      <img src="https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3.png" alt="Singer Avatar" class="avatar-photo">
+    </div>
 
+    <div class="card-info">
+      <h2 id="popup-singer-name" class="profile-name">米津玄師</h2>
+      <p id="popup-singer-title" class="profile-title">日本シンガーソングライター</p>
+      <p id="popup-singer-bio" class="profile-bio">
+        1991年生まれ。2009年よりボカロPとして活動を開始。代表作に『Lemon』、『パプリカ』など。
+      </p>
+    </div>
+
+    <div class="card-stats">
+      <div class="stat-item">
+        <span class="stat-count">21K</span>
+        <span class="stat-label">收藏數</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-count">3</span>
+        <span class="stat-label">專案歌曲</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-count">8M</span>
+        <span class="stat-label">播放次數</span>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <button class="action-btn primary-btn" onclick="closeSingerProfile()">關閉檔案</button>
+      <div class="secondary-actions">
+        <button class="action-btn icon-btn">♥</button>
+        <button class="action-btn icon-btn">✉</button>
+      </div>
+    </div>
+
+  </div>
   <script src="app.js"></script>
 </body>
 </html>
