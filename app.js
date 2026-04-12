@@ -171,3 +171,16 @@ function playSong(songId) {
       else if (vol < 0.5) volumeIcon.innerText = '🔉';
       else volumeIcon.innerText = '🔊';
     }
+    
+const speeds = [0.75, 1.0, 1.25, 1.5];
+let speedIndex = 1; // 預設 1.0x
+
+function toggleSpeed() {
+  speedIndex = (speedIndex + 1) % speeds.length;
+  const newSpeed = speeds[speedIndex];
+  audioPlayer.playbackRate = newSpeed;
+  document.getElementById('speed-btn').innerText = newSpeed + 'x';
+}
+
+// 記得在 playSong 時重置速度，避免上一首歌的速度影響到下一首
+// audioPlayer.playbackRate = speeds[speedIndex];
