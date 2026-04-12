@@ -12,7 +12,6 @@ const volumeBar = document.getElementById('volume-bar');
 const volumeIcon = document.getElementById('volume-icon');
 const repeatBtn = document.getElementById('repeat-btn');
 
-// 狀態管理
 let currentIsFavorites = false;
 let favoriteIds = JSON.parse(localStorage.getItem('myFavSongs')) || [];
 let currentSongIndexInList = 0;
@@ -20,14 +19,14 @@ let currentPlaylist = [];
 let lyricsData = [];
 let currentLineIndex = -1;
 let isDragging = false;
-let repeatMode = 0; // 0: 全部循環, 1: 單曲循環
+let repeatMode = 0; 
 let showTranslation = true;
 let isShuffle = false;
 const speeds = [0.75, 1.0, 1.25, 1.5];
 let speedIndex = 1; 
 
 // ==========================================
-// 2. 曲庫資料 (之後由 Python 更新此處)
+// 2. 曲庫資料庫 
 // ==========================================
 const allSongs = [
   { id: "s1", title: "Lemon", artist: "米津玄師", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" },
@@ -36,7 +35,7 @@ const allSongs = [
 ];
 
 // ==========================================
-// 3. 視圖切換與清單渲染
+// 3. 視圖切換
 // ==========================================
 function hideAllViews() {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -97,7 +96,7 @@ function toggleFavorite(songId, event) {
 }
 
 // ==========================================
-// 4. 播放控制核心邏輯
+// 4. 播放控制邏輯
 // ==========================================
 function playSong(index) {
   if (index < 0 || index >= currentPlaylist.length) return;
@@ -106,11 +105,14 @@ function playSong(index) {
   
   document.getElementById('ui-title').innerText = song.title;
   document.getElementById('ui-artist').innerText = song.artist;
-  globalPlayer.style.display = 'block'; 
+  
+  // 🌟 關鍵修復：這裡要用 flex 才能維持垂直排版
+  globalPlayer.style.display = 'flex'; 
+  
   showPlayerView(); 
   
   audioPlayer.src = song.audio;
-  audioPlayer.playbackRate = speeds[speedIndex]; // 保持速度設定
+  audioPlayer.playbackRate = speeds[speedIndex]; 
   fetchLyrics(song.lyrics);
   audioPlayer.play();
   playPauseBtn.innerText = '⏸';
@@ -128,42 +130,26 @@ function toggleRepeat() {
   repeatBtn.innerText = (repeatMode === 0) ? '🔁' : '🔂';
   repeatBtn.classList.toggle('active', repeatMode === 1);
 }
-// 隨機播放切換邏輯
+
 function toggleShuffle() {
   isShuffle = !isShuffle;
   const shuffleBtn = document.getElementById('shuffle-btn');
   shuffleBtn.classList.toggle('active', isShuffle);
 }
 
-// 覆寫原本的 playNext，讓它支援隨機播放
 function playNext() { 
   let nextIndex;
   if (isShuffle) {
-    // 隨機抽一首歌，確保不會連續抽到同一首 (除非清單只有一首)
-    do {
-      nextIndex = Math.floor(Math.random() * currentPlaylist.length);
-    } while (nextIndex === currentSongIndexInList && currentPlaylist.length > 1);
+    do { nextIndex = Math.floor(Math.random() * currentPlaylist.length); } 
+    while (nextIndex === currentSongIndexInList && currentPlaylist.length > 1);
   } else {
-    // 照順序播
     nextIndex = (currentSongIndexInList + 1) % currentPlaylist.length;
   }
   playSong(nextIndex); 
 }
 
-function playNext() { playSong((currentSongIndexInList + 1) % currentPlaylist.length); }
 function playPrevious() { playSong((currentSongIndexInList - 1 + currentPlaylist.length) % currentPlaylist.length); }
 function skipTime(seconds) { audioPlayer.currentTime += seconds; }
-
-function toggleSpeed() {
-  speedIndex = (speedIndex + 1) % speeds.length;
-  audioPlayer.playbackRate = speeds[speedIndex];
-  document.getElementById('speed-btn').innerText = speeds[speedIndex] + 'x';
-}
-
-function toggleTranslation() {
-  showTranslation = !showTranslation;
-  document.querySelectorAll('.translation').forEach(el => el.classList.toggle('hidden', !showTranslation));
-}
 
 // ==========================================
 // 5. 音量與進度條監聽
@@ -201,7 +187,6 @@ audioPlayer.addEventListener('timeupdate', () => {
     timeCurrentLabel.innerText = formatTime(audioPlayer.currentTime);
   }
 
-  // 歌詞同步
   const activeIndex = lyricsData.findLastIndex(line => audioPlayer.currentTime >= line.startTime);
   if (activeIndex !== currentLineIndex && activeIndex !== -1) {
     const oldLine = document.getElementById(`line-${currentLineIndex}`);
@@ -216,7 +201,7 @@ audioPlayer.addEventListener('timeupdate', () => {
 });
 
 // ==========================================
-// 6. 輔助功能 (時間格式, 歌詞抓取, MediaSession)
+// 6. 輔助功能
 // ==========================================
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
@@ -256,6 +241,4 @@ function updateMediaSession(song) {
   }
 }
 
-
-// 啟動初始化
 initSettings();

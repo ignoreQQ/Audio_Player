@@ -9,6 +9,8 @@
   <link rel="apple-touch-icon" href="icon-512.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  
+  <link rel="stylesheet" href="style.css">
 
   <script>
     if ('serviceWorker' in navigator) {
@@ -17,115 +19,6 @@
       });
     }
   </script>
-
-  <style>
-    /* === 1. 動態柔和背景 === */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: linear-gradient(-45deg, #e0eafc, #cfdef3, #e8f5e9, #f3e5f5);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-      color: #1d1d1f;
-      padding-bottom: 180px;
-      overflow-x: hidden;
-    }
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* === 2. 玻璃態按鈕 === */
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
-    }
-    .liquid-btn {
-      display: block; width: 85%; margin: 20px auto; padding: 18px;
-      font-size: 18px; font-weight: 600; color: #1d1d1f;
-      border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.8);
-      background: rgba(255, 255, 255, 0.35);
-      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      cursor: pointer; transition: all 0.3s ease;
-    }
-    .liquid-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.6); }
-
-    /* === 3. 全域客製化播放器 === */
-    #global-player {
-      position: fixed; bottom: 0; left: 0; width: 100%;
-      padding: 15px 20px 25px 20px; box-sizing: border-box;
-      border-top-left-radius: 30px; border-top-right-radius: 30px;
-      z-index: 1000; display: none;
-      transition: transform 0.3s ease;
-    }
-    .player-info { text-align: center; margin-bottom: 15px; cursor: pointer; }
-    .player-title { font-weight: bold; font-size: 16px; }
-    .player-artist { font-size: 12px; color: #666; }
-    
-    .controls { display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 10px; }
-    .ctrl-btn {
-      background: none; border: none; font-size: 24px; color: #1d1d1f; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      width: 45px; height: 45px; border-radius: 50%; transition: 0.2s;
-    }
-    .ctrl-btn:active { background: rgba(0,0,0,0.1); }
-    .play-pause-btn { font-size: 32px; width: 55px; height: 55px; background: rgba(255,255,255,0.8); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .skip-text { font-size: 10px; font-weight: bold; margin-top: -2px;}
-    
-    /* 重複按鈕特殊樣式 */
-    #repeat-btn { font-size: 20px; opacity: 0.6; }
-    #repeat-btn.active { opacity: 1; transform: scale(1.1); }
-
-    /* 進度條 & 音量條通用設定 */
-    .progress-container, .volume-container { 
-      display: flex; align-items: center; gap: 10px; 
-      font-size: 12px; font-family: monospace; color: #555; 
-    }
-    .volume-container { justify-content: center; margin-top: 15px; padding: 0 10%; }
-    #volume-icon { font-size: 18px; cursor: pointer; width: 24px; text-align: center; }
-
-    input[type=range] {
-      flex-grow: 1; -webkit-appearance: none; height: 6px; border-radius: 3px;
-      background: rgba(0,0,0,0.1); outline: none;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
-      border-radius: 50%; background: #1d1d1f; cursor: pointer; transition: 0.2s;
-    }
-    input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); }
-    #volume-bar { flex-grow: 0.8; }
-
-    /* === 4. 版面與歌詞樣式 === */
-    .view { display: none; padding: 20px; }
-    .view.active { display: block; }
-    .header { display: flex; align-items: center; margin-bottom: 20px; }
-    .back-btn { padding: 10px 15px; border: none; border-radius: 15px; background: rgba(255,255,255,0.5); cursor: pointer; font-weight: bold; }
-    
-    #search-input {
-      width: 100%; padding: 15px; font-size: 16px; border-radius: 15px;
-      border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.5);
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); margin-bottom: 20px; outline: none; box-sizing: border-box;
-    }
-    #song-list { list-style: none; padding: 0; margin: 0; }
-    .song-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 18px; margin-bottom: 12px; border-radius: 20px; cursor: pointer; transition: 0.2s;
-    }
-    .song-item:active { transform: scale(0.98); }
-    .fav-icon { font-size: 24px; color: rgba(0,0,0,0.2); padding: 10px; }
-    .fav-icon.active { color: #ff2d55; }
-
-    .lyric-line { margin: 30px 0; padding-left: 10px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; opacity: 0.4; }
-    .lyric-line.active { opacity: 1; transform: translateX(15px) scale(1.05); }
-    ruby { font-size: 24px; font-weight: bold; margin-right: 5px; }
-    rt { font-size: 12px; color: #007aff; }
-    .translation { font-size: 16px; margin-top: 8px; }
-  </style>
 </head>
 <body>
 
@@ -188,7 +81,5 @@
   </div>
 
   <script src="app.js"></script>
-</body>
-</html>
 </body>
 </html>
