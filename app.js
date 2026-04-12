@@ -22,6 +22,7 @@ let currentLineIndex = -1;
 let isDragging = false;
 let repeatMode = 0; // 0: 全部循環, 1: 單曲循環
 let showTranslation = true;
+let isShuffle = false;
 const speeds = [0.75, 1.0, 1.25, 1.5];
 let speedIndex = 1; 
 
@@ -126,6 +127,27 @@ function toggleRepeat() {
   repeatMode = (repeatMode + 1) % 2;
   repeatBtn.innerText = (repeatMode === 0) ? '🔁' : '🔂';
   repeatBtn.classList.toggle('active', repeatMode === 1);
+}
+// 隨機播放切換邏輯
+function toggleShuffle() {
+  isShuffle = !isShuffle;
+  const shuffleBtn = document.getElementById('shuffle-btn');
+  shuffleBtn.classList.toggle('active', isShuffle);
+}
+
+// 覆寫原本的 playNext，讓它支援隨機播放
+function playNext() { 
+  let nextIndex;
+  if (isShuffle) {
+    // 隨機抽一首歌，確保不會連續抽到同一首 (除非清單只有一首)
+    do {
+      nextIndex = Math.floor(Math.random() * currentPlaylist.length);
+    } while (nextIndex === currentSongIndexInList && currentPlaylist.length > 1);
+  } else {
+    // 照順序播
+    nextIndex = (currentSongIndexInList + 1) % currentPlaylist.length;
+  }
+  playSong(nextIndex); 
 }
 
 function playNext() { playSong((currentSongIndexInList + 1) % currentPlaylist.length); }
@@ -234,37 +256,6 @@ function updateMediaSession(song) {
   }
 }
 
-// 打開歌手檔案彈窗
-function openSingerProfile(singerName) {
-  const popup = document.getElementById('singer-profile-popup');
-  const nameLabel = document.getElementById('popup-singer-name');
-  const titleLabel = document.getElementById('popup-singer-title');
-  const bioLabel = document.getElementById('popup-singer-bio');
 
-  // 這裡需要根據不同歌手名稱載入不同的資料
-  // 你可以建立一個字典檔或從 allSongs 中抓取
-  if (singerName === "米津玄師") {
-    nameLabel.innerText = "米津玄師";
-    titleLabel.innerText = "日本シンガーソングライター";
-    bioLabel.innerText = "1991年生まれ。2009年よりボカロPとして活動を開始。代表作に『Lemon』、『パプリカ』など。";
-  } else if (singerName === "優里Yuuri") {
-    nameLabel.innerText = "優里Yuuri";
-    titleLabel.innerText = "多声、多彩な表現力を持つシンガー";
-    bioLabel.innerText = "「ドライフラワー」がSNSを中心に大ヒット。力強い歌声が特徴。";
-  }
-  // ... 其他歌手以此類推
-
-  popup.classList.add('active');
-}
-
-// 關閉歌手檔案彈窗
-function closeSingerProfile() {
-  document.getElementById('singer-profile-popup').classList.remove('active');
-}
-
-// 可選：點擊遮罩層外部也關閉彈窗
-document.getElementById('singer-profile-popup').addEventListener('click', (e) => {
-  if (e.target.id === 'singer-profile-popup') closeSingerProfile();
-});
 // 啟動初始化
 initSettings();
