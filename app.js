@@ -29,10 +29,45 @@ let speedIndex = 1;
 // 2. 曲庫資料庫 
 // ==========================================
 const allSongs = [
-  { id: "s1", title: "Lemon", artist: "米津玄師", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" },
-  { id: "s2", title: "ベテルギウス", artist: "優里Yuuri", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json" },
-  { id: "s3", title: "Teacher", artist: "友成空", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Teacher.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json" }
+  { 
+  id: "s1", 
+  title: "Lemon", 
+  artist: "米津玄師", 
+  audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", 
+  lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" 
+  },
+  { id: "s2", 
+    title: "ベテルギウス", 
+    artist: "優里Yuuri", 
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json" 
+  },
+  { id: "s3", 
+    title: "Teacher", 
+    artist: "友成空", 
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Teacher.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json" 
+  },
+  { 
+    id: "s4",
+    title: "バイバイ YESTERDAY", 
+    artist: "歌手名", 
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/バイバイ YESTERDAY.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/バイバイ YESTERDAY.json" 
+  },
+
 ];
+/*
+範本
+{ 
+    id: "",
+    title: "歌名", 
+    artist: "歌手名", 
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/歌名.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/歌詞.json" 
+},
+*/
+
 
 // ==========================================
 // 3. 視圖切換
