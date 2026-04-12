@@ -1,84 +1,83 @@
-if ('mediaSession' in navigator) {
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title: '歌曲名稱',
-    artist: '歌手名字',
-    album: '日文歌學習專案',
-    artwork: [
-      { src: 'icon-512.png', sizes: '512x512', type: 'image/png' }
-    ]
-  });
+// ==========================================
+// 1. 初始化 DOM 元素與全域變數
+// ==========================================
+const audioPlayer = document.getElementById('audio-player');
+const lyricsContainer = document.getElementById('lyrics-container');
+const globalPlayer = document.getElementById('global-player');
+const playPauseBtn = document.getElementById('play-pause-btn');
+const progressBar = document.getElementById('progress-bar');
+const timeCurrentLabel = document.getElementById('time-current');
+const timeTotalLabel = document.getElementById('time-total');
+const volumeBar = document.getElementById('volume-bar');
+const volumeIcon = document.getElementById('volume-icon');
+const repeatBtn = document.getElementById('repeat-btn');
 
-  // 讓鎖定畫面的播放/暫停按鈕也能控制你的播放器
-  navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
-  navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
-}
+// 狀態管理
+let currentIsFavorites = false;
+let favoriteIds = JSON.parse(localStorage.getItem('myFavSongs')) || [];
+let currentSongIndexInList = 0;
+let currentPlaylist = [];
+let lyricsData = [];
+let currentLineIndex = -1;
+let isDragging = false;
+let repeatMode = 0; // 0: 全部循環, 1: 單曲循環
+let showTranslation = true;
+const speeds = [0.75, 1.0, 1.25, 1.5];
+let speedIndex = 1; 
 
-// 1. 建立你的「滿滿曲庫」陣列
+// ==========================================
+// 2. 曲庫資料 (之後由 Python 更新此處)
+// ==========================================
 const allSongs = [
-  { id: "s1", title: "Lemon", artist: "米津玄師", audio: "url...", lyrics: "url..." },
-  { id: "s2", title: "ベテルギウス", artist: "優里Yuuri", audio: "url...", lyrics: "url..." },
-  { id: "s3", title: "Teacher", artist: "友成空", audio: "url...", lyrics: "url..." }
-  // 以後用 Python 產生的歌就一直往下加
+  { id: "s1", title: "Lemon", artist: "米津玄師", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" },
+  { id: "s2", title: "ベテルギウス", artist: "優里Yuuri", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json" },
+  { id: "s3", title: "Teacher", artist: "友成空", audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Teacher.mp3", lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json" }
 ];
 
-let currentIsFavorites = false;
-
-// 2. 從手機讀取收藏紀錄 (如果是空的就給一個空陣列)
-let favoriteIds = JSON.parse(localStorage.getItem('myFavSongs')) || [];
-
-// --- 畫面切換控制 ---
+// ==========================================
+// 3. 視圖切換與清單渲染
+// ==========================================
 function hideAllViews() {
-  document.getElementById('home-view').style.display = 'none';
-  document.getElementById('library-view').style.display = 'none';
-  document.getElementById('player-view').style.display = 'none';
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 }
 
-function showHome() {
-  hideAllViews();
-  document.getElementById('home-view').style.display = 'block';
-}
+function showHome() { hideAllViews(); document.getElementById('home-view').classList.add('active'); }
 
 function showLibrary(onlyFavorites) {
   hideAllViews();
   currentIsFavorites = onlyFavorites;
-  document.getElementById('library-view').style.display = 'block';
+  document.getElementById('library-view').classList.add('active');
   document.getElementById('library-title').innerText = onlyFavorites ? "我的收藏" : "全部歌曲";
-  
-  // 清空搜尋框並重新渲染列表
   document.getElementById('search-input').value = "";
   renderSongList();
 }
 
-// --- 渲染清單與搜尋功能 ---
+function showPlayerView() {
+  hideAllViews();
+  document.getElementById('player-view').classList.add('active');
+}
+
 function renderSongList(searchQuery = "") {
   const listContainer = document.getElementById('song-list');
-  listContainer.innerHTML = ''; // 清空目前的清單
+  listContainer.innerHTML = ''; 
 
-  // 篩選邏輯：先看是不是收藏模式，再看搜尋框有沒有字
-  let filteredSongs = allSongs.filter(song => {
-    // 檢查收藏
+  currentPlaylist = allSongs.filter(song => {
     if (currentIsFavorites && !favoriteIds.includes(song.id)) return false;
-    // 檢查搜尋 (轉小寫比對)
     const query = searchQuery.toLowerCase();
-    const matchTitle = song.title.toLowerCase().includes(query);
-    const matchArtist = song.artist.toLowerCase().includes(query);
-    return matchTitle || matchArtist;
+    return song.title.toLowerCase().includes(query) || song.artist.toLowerCase().includes(query);
   });
 
-  // 把過濾後的歌曲變成 HTML 塞進去
-  filteredSongs.forEach(song => {
+  currentPlaylist.forEach((song, index) => {
     const li = document.createElement('li');
-    li.className = 'song-item';
-    
-    // 判斷這首歌有沒有在收藏名單內
+    li.className = 'song-item glass-panel';
     const isFav = favoriteIds.includes(song.id);
-    const starClass = isFav ? "fav-icon active" : "fav-icon";
     const starSymbol = isFav ? "♥" : "♡";
+    const starClass = isFav ? "fav-icon active" : "fav-icon";
 
     li.innerHTML = `
-      <div onclick="playSong('${song.id}')">
+      <div style="flex-grow: 1;" onclick="playSong(${index})">
         <div style="font-size: 18px; font-weight: bold;">${song.title}</div>
-        <div style="font-size: 14px; color: gray;">${song.artist}</div>
+        <div style="font-size: 14px; color: #555;">${song.artist}</div>
       </div>
       <div class="${starClass}" onclick="toggleFavorite('${song.id}', event)">${starSymbol}</div>
     `;
@@ -86,101 +85,154 @@ function renderSongList(searchQuery = "") {
   });
 }
 
-// 搜尋框輸入時觸發
-function filterSongs() {
-  const query = document.getElementById('search-input').value;
-  renderSongList(query);
-}
+function filterSongs() { renderSongList(document.getElementById('search-input').value); }
 
-// --- 收藏功能切換 ---
 function toggleFavorite(songId, event) {
-  event.stopPropagation(); // 防止點擊愛心時觸發播放歌曲
-  
-  if (favoriteIds.includes(songId)) {
-    // 移除收藏
-    favoriteIds = favoriteIds.filter(id => id !== songId);
-  } else {
-    // 加入收藏
-    favoriteIds.push(songId);
-  }
-  
-  // 儲存進手機的 localStorage
+  event.stopPropagation(); 
+  if (favoriteIds.includes(songId)) favoriteIds = favoriteIds.filter(id => id !== songId);
+  else favoriteIds.push(songId);
   localStorage.setItem('myFavSongs', JSON.stringify(favoriteIds));
-  
-  // 重新渲染畫面更新愛心狀態
   filterSongs(); 
 }
 
-// --- 播放邏輯整合 ---
-function playSong(songId) {
-  // 找出選中的歌曲
-  const song = allSongs.find(s => s.id === songId);
+// ==========================================
+// 4. 播放控制核心邏輯
+// ==========================================
+function playSong(index) {
+  if (index < 0 || index >= currentPlaylist.length) return;
+  currentSongIndexInList = index;
+  const song = currentPlaylist[index];
   
-  hideAllViews();
-  document.getElementById('player-view').style.display = 'block';
-  document.getElementById('player-title').innerText = song.title;
+  document.getElementById('ui-title').innerText = song.title;
+  document.getElementById('ui-artist').innerText = song.artist;
+  globalPlayer.style.display = 'block'; 
+  showPlayerView(); 
   
-  // 這裡接上你原本寫好的 fetchLyrics() 與播放邏輯
-  // audioPlayer.src = song.audio;
-  // loadLyrics(song.lyrics);
-  // audioPlayer.play();
+  audioPlayer.src = song.audio;
+  audioPlayer.playbackRate = speeds[speedIndex]; // 保持速度設定
+  fetchLyrics(song.lyrics);
+  audioPlayer.play();
+  playPauseBtn.innerText = '⏸';
+
+  updateMediaSession(song);
 }
 
-// ==========================================
-    // 6. 音量控制與記憶邏輯
-    // ==========================================
-    const volumeBar = document.getElementById('volume-bar');
-    const volumeIcon = document.getElementById('volume-icon');
-    
-    // 從 localStorage 讀取上次的音量，如果沒有就預設 1.0 (最大聲)
-    let savedVolume = localStorage.getItem('mySavedVolume');
-    if (savedVolume !== null) {
-      audioPlayer.volume = parseFloat(savedVolume);
-      volumeBar.value = audioPlayer.volume * 100;
-      updateVolumeIcon(audioPlayer.volume);
-    }
+function togglePlay() {
+  if (audioPlayer.paused) { audioPlayer.play(); playPauseBtn.innerText = '⏸'; }
+  else { audioPlayer.pause(); playPauseBtn.innerText = '▶️'; }
+}
 
-    // 監聽音量拉桿拖曳
-    volumeBar.addEventListener('input', (e) => {
-      const vol = e.target.value / 100;
-      audioPlayer.volume = vol;
-      localStorage.setItem('mySavedVolume', vol); // 存進個人端
-      updateVolumeIcon(vol);
-    });
+function toggleRepeat() {
+  repeatMode = (repeatMode + 1) % 2;
+  repeatBtn.innerText = (repeatMode === 0) ? '🔁' : '🔂';
+  repeatBtn.classList.toggle('active', repeatMode === 1);
+}
 
-    // 點擊喇叭圖示切換靜音
-    function toggleMute() {
-      if (audioPlayer.volume > 0) {
-        // 記憶靜音前的音量
-        audioPlayer.dataset.lastVol = audioPlayer.volume;
-        audioPlayer.volume = 0;
-        volumeBar.value = 0;
-      } else {
-        // 恢復靜音前的音量
-        const restoreVol = audioPlayer.dataset.lastVol || 1;
-        audioPlayer.volume = restoreVol;
-        volumeBar.value = restoreVol * 100;
-      }
-      localStorage.setItem('mySavedVolume', audioPlayer.volume);
-      updateVolumeIcon(audioPlayer.volume);
-    }
-
-    // 根據音量大小更換圖示
-    function updateVolumeIcon(vol) {
-      if (vol === 0) volumeIcon.innerText = '🔇';
-      else if (vol < 0.5) volumeIcon.innerText = '🔉';
-      else volumeIcon.innerText = '🔊';
-    }
-    
-const speeds = [0.75, 1.0, 1.25, 1.5];
-let speedIndex = 1; // 預設 1.0x
+function playNext() { playSong((currentSongIndexInList + 1) % currentPlaylist.length); }
+function playPrevious() { playSong((currentSongIndexInList - 1 + currentPlaylist.length) % currentPlaylist.length); }
+function skipTime(seconds) { audioPlayer.currentTime += seconds; }
 
 function toggleSpeed() {
   speedIndex = (speedIndex + 1) % speeds.length;
-  const newSpeed = speeds[speedIndex];
-  audioPlayer.playbackRate = newSpeed;
-  document.getElementById('speed-btn').innerText = newSpeed + 'x';
+  audioPlayer.playbackRate = speeds[speedIndex];
+  document.getElementById('speed-btn').innerText = speeds[speedIndex] + 'x';
 }
 
-// 記得在 playSong 時重置速度，避免上一首歌的速度影響到下一首
-// audioPlayer.playbackRate = speeds[speedIndex];
+function toggleTranslation() {
+  showTranslation = !showTranslation;
+  document.querySelectorAll('.translation').forEach(el => el.classList.toggle('hidden', !showTranslation));
+}
+
+// ==========================================
+// 5. 音量與進度條監聽
+// ==========================================
+function initSettings() {
+  let savedVolume = localStorage.getItem('mySavedVolume');
+  if (savedVolume !== null) {
+    audioPlayer.volume = parseFloat(savedVolume);
+    volumeBar.value = audioPlayer.volume * 100;
+    updateVolumeIcon(audioPlayer.volume);
+  }
+}
+
+volumeBar.addEventListener('input', (e) => {
+  const vol = e.target.value / 100;
+  audioPlayer.volume = vol;
+  localStorage.setItem('mySavedVolume', vol);
+  updateVolumeIcon(vol);
+});
+
+function updateVolumeIcon(vol) {
+  if (vol === 0) volumeIcon.innerText = '🔇';
+  else if (vol < 0.5) volumeIcon.innerText = '🔉';
+  else volumeIcon.innerText = '🔊';
+}
+
+audioPlayer.addEventListener('timeupdate', () => {
+  if (audioPlayer.ended) { 
+    if (repeatMode === 1) { audioPlayer.currentTime = 0; audioPlayer.play(); }
+    else { playNext(); }
+  }
+  
+  if (!isDragging && audioPlayer.duration) {
+    progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    timeCurrentLabel.innerText = formatTime(audioPlayer.currentTime);
+  }
+
+  // 歌詞同步
+  const activeIndex = lyricsData.findLastIndex(line => audioPlayer.currentTime >= line.startTime);
+  if (activeIndex !== currentLineIndex && activeIndex !== -1) {
+    const oldLine = document.getElementById(`line-${currentLineIndex}`);
+    if(oldLine) oldLine.classList.remove('active');
+    currentLineIndex = activeIndex;
+    const activeLine = document.getElementById(`line-${currentLineIndex}`);
+    if(activeLine) {
+      activeLine.classList.add('active');
+      activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+});
+
+// ==========================================
+// 6. 輔助功能 (時間格式, 歌詞抓取, MediaSession)
+// ==========================================
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+async function fetchLyrics(url) {
+  lyricsContainer.innerHTML = '歌詞載入中...';
+  currentLineIndex = -1;
+  try {
+    const response = await fetch(url);
+    lyricsData = await response.json();
+    lyricsContainer.innerHTML = ''; 
+    lyricsData.forEach((line, index) => {
+      const lineDiv = document.createElement('div');
+      lineDiv.className = 'lyric-line';
+      lineDiv.id = `line-${index}`;
+      let wordsHTML = line.words.map(w => `<ruby>${w.text}<rt>${w.furigana || ''}</rt></ruby>`).join('');
+      lineDiv.innerHTML = `<div>${wordsHTML}</div><div class="translation">${line.translation}</div>`;
+      lineDiv.onclick = () => { audioPlayer.currentTime = line.startTime + 0.01; audioPlayer.play(); };
+      lyricsContainer.appendChild(lineDiv);
+    });
+  } catch (e) { lyricsContainer.innerHTML = "歌詞載入失敗"; }
+}
+
+function updateMediaSession(song) {
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: song.title, artist: song.artist, album: '日文歌學習',
+      artwork: [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }]
+    });
+    navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
+    navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
+    navigator.mediaSession.setActionHandler('previoustrack', () => playPrevious());
+    navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
+  }
+}
+
+// 啟動初始化
+initSettings();
