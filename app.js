@@ -106,8 +106,7 @@ function playSong(index) {
   document.getElementById('ui-title').innerText = song.title;
   document.getElementById('ui-artist').innerText = song.artist;
   
-  // 🌟 關鍵修復：這裡要用 flex 才能維持垂直排版
-  globalPlayer.style.display = 'flex'; 
+  globalPlayer.classList.add('active-player');
   
   showPlayerView(); 
   
@@ -177,24 +176,24 @@ function updateVolumeIcon(vol) {
   else volumeIcon.innerText = '🔊';
 }
 
-// 🌟 補回：當音樂資料載入完畢時，更新總時間
-audioPlayer.addEventListener('loadedmetadata', () => {
-  timeTotalLabel.innerText = formatTime(audioPlayer.duration);
+// 🌟 改用 durationchange，對網路串流音檔支援度最好
+audioPlayer.addEventListener('durationchange', () => {
+  if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+    timeTotalLabel.innerText = formatTime(audioPlayer.duration);
+  }
 });
 
-// 🌟 補回：使用者拖動進度條時 (畫面時間跟著變，但還沒放開)
 progressBar.addEventListener('input', (e) => {
   isDragging = true;
-  if (audioPlayer.duration) {
+  if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
     const targetTime = (e.target.value / 100) * audioPlayer.duration;
     timeCurrentLabel.innerText = formatTime(targetTime);
   }
 });
 
-// 🌟 補回：使用者放開進度條時 (真正改變音樂播放位置)
 progressBar.addEventListener('change', (e) => {
   isDragging = false;
-  if (audioPlayer.duration) {
+  if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
     audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
   }
 });
@@ -205,12 +204,20 @@ audioPlayer.addEventListener('timeupdate', () => {
     else { playNext(); }
   }
   
-  if (!isDragging && audioPlayer.duration) {
-    progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-    timeCurrentLabel.innerText = formatTime(audioPlayer.currentTime);
+  // 🌟 雙重保險：確保音樂播放時能確實更新總長度與進度條
+  if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+    if (timeTotalLabel.innerText === "0:00") {
+      timeTotalLabel.innerText = formatTime(audioPlayer.duration);
+    }
+    
+    if (!isDragging) {
+      const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+      progressBar.value = percent;
+      timeCurrentLabel.innerText = formatTime(audioPlayer.currentTime);
+    }
   }
 
-  // 歌詞同步
+  // 歌詞同步處理
   const activeIndex = lyricsData.findLastIndex(line => audioPlayer.currentTime >= line.startTime);
   if (activeIndex !== currentLineIndex && activeIndex !== -1) {
     const oldLine = document.getElementById(`line-${currentLineIndex}`);
@@ -223,11 +230,12 @@ audioPlayer.addEventListener('timeupdate', () => {
     }
   }
 });
-
 // ==========================================
 // 6. 輔助功能
 // ==========================================
+
 function formatTime(seconds) {
+  if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return `${m}:${s < 10 ? '0' : ''}${s}`;
