@@ -35,7 +35,7 @@ const allSongs = [
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" 
   },
   { 
-    id: "N2", title: "ベテルギウス", artist: "優里Yuuri", category: "日文",
+    id: "N2", title: "ベテルギウス", artist: "優里 Yuuri", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3", 
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json" 
   },
@@ -48,7 +48,32 @@ const allSongs = [
     id: "N4", title: "バイバイ YESTERDAY", artist: "3年E組", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/バイバイ YESTERDAY.mp3", 
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/バイバイ YESTERDAY.json" 
-  }
+  },
+  {
+    id: "T1", title: "壞蛋", artist: "糜先生 Mixer", category: "華語",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/壞蛋.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/壞蛋.json"
+  },
+  {
+    id: "T2", title: "笨蛋", artist: "糜先生 Mixer", category: "華語",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/笨蛋.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/笨蛋.json"
+  },
+  {
+    id: "T3", title: "嗜愛動物", artist: "糜先生 Mixer", category: "華語",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/嗜愛動物.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/嗜愛動物.json"
+  },
+  {
+    id: "T4", title: "長成什麼樣子算愛情", artist: "糜先生 Mixer", category: "華語",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/長成什麼樣子算愛情.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/長成什麼樣子算愛情.json"
+  },
+  {
+    id: "T5", title: "水星記", artist: "郭頂", category: "華語",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/水星記.mp3", 
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/水星記.json"
+  }      
 ];
 
 // ==========================================
