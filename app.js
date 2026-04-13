@@ -323,9 +323,20 @@ async function fetchLyrics(url) {
       const lineDiv = document.createElement('div');
       lineDiv.className = 'lyric-line';
       lineDiv.id = `line-${index}`;
+      
       let wordsHTML = line.words.map(w => `<ruby>${w.text}<rt>${w.furigana || ''}</rt></ruby>`).join('');
-      const hiddenClass = showTranslation ? '' : 'hidden';
-      lineDiv.innerHTML = `<div>${wordsHTML}</div><div class="translation ${hiddenClass}">${line.translation}</div>`;
+      
+      let originalText = line.words.map(w => w.text).join('');
+      let transHTML = '';
+      
+      if (line.translation && line.translation.trim() !== '' && line.translation !== originalText) {
+        const hiddenClass = showTranslation ? '' : 'hidden';
+        transHTML = `<div class="translation ${hiddenClass}">${line.translation}</div>`;
+      }
+      
+      // 組合最終的 HTML
+      lineDiv.innerHTML = `<div>${wordsHTML}</div>${transHTML}`;
+      
       lineDiv.onclick = () => { audioPlayer.currentTime = line.startTime + 0.01; audioPlayer.play(); };
       lyricsContainer.appendChild(lineDiv);
     });
