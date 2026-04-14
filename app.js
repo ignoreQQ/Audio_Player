@@ -214,7 +214,6 @@ function playSong(index) {
   document.getElementById('ui-artist').innerText = song.artist;
   
   globalPlayer.classList.add('active-player');
-  // 自動進入迷你模式以免擋住歌詞
   globalPlayer.classList.add('mini-mode'); 
   document.getElementById('toggle-icon').innerText = '🔼'; 
   
