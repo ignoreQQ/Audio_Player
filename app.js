@@ -73,7 +73,32 @@ const allSongs = [
     id: "T5", title: "水星記", artist: "郭頂", category: "華語",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/水星記.mp3", 
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/水星記.json"
-  }      
+  },
+  {
+    id:"N5", title: "天ノ弱", artist: "秋絵(原唱:GUMI)", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/天ノ弱.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/天ノ弱.json"
+  },
+  {
+    id:"N6", title: "光るなら", artist: "Goose House", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/光るなら.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/光るなら.json"
+  },
+  {
+    id:"N7", title: "前前前世", artist: "RADWIMPS", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/前前前世.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/前前前世.json"
+  },
+  { 
+    id:"N8", title: "旅立ちのうた", artist: "3年E組", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/旅立ちのうた.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/旅立ちのうた.json"
+  },
+  {
+    id:"N9", title: "チューリングラブ", artist:"ナナヲアカリ Feat.Sou", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/チューリングラブ feat.Sou.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/チューリングラブ feat.Sou.json"
+  }
 ];
 
 // ==========================================
