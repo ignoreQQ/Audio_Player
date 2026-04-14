@@ -143,6 +143,21 @@ const allSongs = [
     id:"N18", title: "マリーゴールド", artist:"あいみょん", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/マリーゴールド.mp3",
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マリーゴールド.json"
+  },
+  {
+    id:"N19", title: "僕が死のうと思ったのは", artist:"中島美嘉", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/僕が死のうと思ったのは.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/僕が死のうと思ったのは.json"
+  },
+  {
+    id:"N20", title: "雪の音", artist:"Novelbright", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/雪の音.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/雪の音.json"
+  },
+  {
+    id:"N21", title: "怪物", artist:"YOASOBI", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/怪物.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/怪物.json"
   }
 ];
 
