@@ -45,7 +45,7 @@ const allSongs = [
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json" 
   },
   { 
-    id: "N4", title: "バイバイ YESTERDAY", artist: "3年E組", category: "日文",
+    id: "N4", title: "バイバイ YESTERDAY", artist: "3年E組うた担", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/バイバイ YESTERDAY.mp3", 
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/バイバイ YESTERDAY.json" 
   },
@@ -98,6 +98,26 @@ const allSongs = [
     id:"N9", title: "チューリングラブ", artist:"ナナヲアカリ Feat.Sou", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/チューリングラブ feat.Sou.mp3",
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/チューリングラブ feat.Sou.json"
+  },
+  {
+    id:"N10", title: "only my railgun", artist:"fripSide", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/only my railgun.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/only my railgun.json"
+  },
+  {
+    id:"N11", title: "Flyer!", artist:"FloweR", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Flyer.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Flyer.json"
+  },
+  {
+    id:"N12", title: "QUESTION", artist:"3年E組うた担", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/QUESTION.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/QUESTION.json"
+  },
+  {
+    id:"N13", title: "生命換装", artist:"ReoNa", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/生命換装.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/生命換装.json"
   }
 ];
 
