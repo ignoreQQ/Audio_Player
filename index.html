@@ -21,17 +21,22 @@
   </script>
 </head>
 <body>
-
   <audio id="audio-player" preload="metadata"></audio>
 
   <div id="home-view" class="view active">
-    <div style="text-align: center; margin: 60px 0;">
-      <h1 style="font-size: 32px; letter-spacing: 2px;"><br>歌曲播放器</h1>
+    <div style="text-align: center; margin: 60px 0 40px 0;">
+      <h1 style="font-size: 32px; letter-spacing: 2px;">歌曲播放器</h1>
     </div>
+    
     <div class="menu-container">
       <button class="liquid-btn" onclick="showLibrary('all')">1. 進入曲庫 🎵</button>
       <button class="liquid-btn favorite-btn" style="background: rgba(255, 45, 85, 0.15);" onclick="showLibrary('favorites')">2. 我的收藏 🤍</button>
       <button class="liquid-btn" style="margin-top: 30px; background: rgba(0,0,0,0.05);" onclick="showSettings()">3. 系統設定 ⚙️</button>
+    </div>
+    
+    <div class="glass-panel announcement-box" style="margin-top: 50px;">
+      <h3>📢 最新公告</h3>
+      <p>歡迎使用歌曲播放器！<br>• 2026/04：新增排序功能與數首新歌。<br>• 可以在設定中調整字幕大小與翻譯顯示喔！</p>
     </div>
   </div>
 
@@ -73,6 +78,14 @@
     
     <input type="text" id="search-input" placeholder="🔍 搜尋歌名或歌手..." onkeyup="filterSongs()">
 
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+      <select id="sort-select" class="glass-panel sort-dropdown" onchange="changeSortMode(this.value)">
+        <option value="default">預設排序</option>
+        <option value="title">依歌名排序 (A-Z)</option>
+        <option value="artist">依歌手排序 (A-Z)</option>
+      </select>
+    </div>
+
     <div class="category-tabs" id="category-tabs">
       <button class="cat-btn active" data-cat="all" onclick="changeCategory('all')">全部</button>
       <button class="cat-btn" data-cat="日文" onclick="changeCategory('日文')">🇯🇵 日文</button>
@@ -111,9 +124,7 @@
     <div class="controls">
       <button class="ctrl-btn" id="shuffle-btn" onclick="toggleShuffle()">🔀</button>
       <button class="ctrl-btn" id="prev-btn" onclick="playPrevious()">⏮</button>
-      
       <button class="ctrl-btn play-pause-btn" id="play-pause-btn" onclick="togglePlay()">▶</button>
-      
       <button class="ctrl-btn" id="next-btn" onclick="playNext()">⏭</button>
       <button class="ctrl-btn" id="repeat-btn" onclick="toggleRepeat()">🔁</button>
     </div>

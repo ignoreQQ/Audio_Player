@@ -11,6 +11,7 @@ const timeTotalLabel = document.getElementById('time-total');
 const volumeBar = document.getElementById('volume-bar');
 const volumeIcon = document.getElementById('volume-icon');
 const repeatBtn = document.getElementById('repeat-btn');
+const speeds = [0.75, 1.0, 1.25, 1.5];
 
 let currentCategory = 'all'; // 統一使用 currentCategory 管理狀態
 let favoriteIds = JSON.parse(localStorage.getItem('myFavSongs')) || [];
@@ -22,8 +23,8 @@ let isDragging = false;
 let repeatMode = 0; 
 let showTranslation = true;
 let isShuffle = false;
-const speeds = [0.75, 1.0, 1.25, 1.5];
 let speedIndex = 1; 
+let currentSortMode = 'default'; // 新增這行：追蹤目前的排序狀態
 
 // ==========================================
 // 2. 曲庫資料庫 
@@ -213,6 +214,15 @@ function renderSongList(searchQuery = "") {
     const query = searchQuery.toLowerCase();
     return song.title.toLowerCase().includes(query) || song.artist.toLowerCase().includes(query);
   });
+    // 👇 新增的排序邏輯 👇
+  if (currentSortMode === 'title') {
+    // 依歌名排序
+    currentPlaylist.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
+  } else if (currentSortMode === 'artist') {
+    // 依歌手排序
+    currentPlaylist.sort((a, b) => a.artist.localeCompare(b.artist, 'zh-Hant'));
+  }
+  // ☝️ 新增的排序邏輯 ☝️
 
   currentPlaylist.forEach((song, index) => {
     const li = document.createElement('li');
@@ -233,7 +243,10 @@ function renderSongList(searchQuery = "") {
 }
 
 function filterSongs() { renderSongList(document.getElementById('search-input').value); }
-
+function changeSortMode(mode) {
+  currentSortMode = mode;
+  renderSongList(document.getElementById('search-input').value);
+}
 function toggleFavorite(songId, event) {
   event.stopPropagation(); 
   if (favoriteIds.includes(songId)) favoriteIds = favoriteIds.filter(id => id !== songId);
