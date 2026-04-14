@@ -118,6 +118,31 @@ const allSongs = [
     id:"N13", title: "生命換装", artist:"ReoNa", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/生命換装.mp3",
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/生命換装.json"
+  },
+  {
+    id:"N14", title: "夜に駆ける", artist:"YOASOBI", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/夜に駆ける.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/夜に駆ける.json"
+  },
+  {
+    id:"N15", title: "紅蓮華", artist:"LiSA", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/紅蓮華.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/紅蓮華.json"
+  },
+  {
+    id:"N16", title: "インフェルノ", artist:"Mrs. GREEN APPLE", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/インフェルノ.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/インフェルノ.json"
+  },
+  {
+    id:"N17", title: "廻廻奇譚", artist:"Eve", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/廻廻奇譚.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/廻廻奇譚.json"
+  },
+  {
+    id:"N18", title: "マリーゴールド", artist:"あいみょん", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/マリーゴールド.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マリーゴールド.json"
   }
 ];
 
