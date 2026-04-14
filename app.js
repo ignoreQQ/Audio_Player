@@ -106,8 +106,8 @@ const allSongs = [
   },
   {
     id:"N11", title: "Flyer!", artist:"FloweR", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Flyer.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Flyer.json"
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Flyer!.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Flyer!.json"
   },
   {
     id:"N12", title: "QUESTION", artist:"3年E組うた担", category: "日文",
