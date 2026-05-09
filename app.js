@@ -159,6 +159,11 @@ const allSongs = [
     id:"N21", title: "怪物", artist:"YOASOBI", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/怪物.mp3",
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/怪物.json"
+  },
+  {
+    id:"N22", title: "キャラメルハート", artist:"超特急", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/キャラメルハート.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/キャラメルハート.json"
   }
 ];
 
