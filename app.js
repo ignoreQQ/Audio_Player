@@ -164,6 +164,11 @@ const allSongs = [
     id:"N22", title: "キャラメルハート", artist:"超特急", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/キャラメルハート.mp3",
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/キャラメルハート.json"
+  },
+  {
+    id:"N23", title: "Finale.", artist:"eill", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Finale.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Finale.json"
   }
 ];
 
