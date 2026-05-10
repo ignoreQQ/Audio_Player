@@ -169,6 +169,11 @@ const allSongs = [
     id:"N23", title: "Finale.", artist:"eill", category: "日文",
     audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Finale.mp3",
     lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Finale.json"
+  },
+  {
+    id:"N24", title: "零-zero-", artist:"tuki.", category: "日文",
+    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Zero.mp3",
+    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Zero.json"
   }
 ];
 
