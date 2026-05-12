@@ -22,7 +22,6 @@ html, body {
 body { 
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
   background: var(--color-background-secondary); 
-  /* 🌟 核心防禦：絕對鎖定可視螢幕範圍，徹底消滅 iOS 獨立模式下 100vh 往下沉的裁切 Bug */
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
 }
 
@@ -66,13 +65,25 @@ body {
 .grad-3 { background: linear-gradient(135deg, #993C1D, #F0997B); }
 .grad-4 { background: linear-gradient(135deg, #993556, #ED93B1); }
 
-/* 清單樣式 */
-.custom-song-list { list-style: none; width: 100%; }
-.track-item { display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 14px; cursor: pointer; width: 100%; box-sizing: border-box; }
+/* =========================================================
+   🌟 核心修正：強制重設清單預設邊界，讓歌曲卡片完美貼齊左側
+========================================================= */
+.custom-song-list { 
+  list-style: none; 
+  width: 100%; 
+  margin: 0;       /* 🌟 徹底清除外邊距 */
+  padding: 0;      /* 🌟 徹底清除 ul 預設的 40px 左縮排 */
+}
+
+.track-item { 
+  display: flex; align-items: center; gap: 14px; 
+  padding: 12px; border-radius: 14px; cursor: pointer; 
+  width: 100%; box-sizing: border-box; 
+}
 .track-item:active { background: var(--color-background-secondary); }
 .track-thumb { width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .track-thumb i { color: white; font-size: 20px; }
-.track-info { flex: 1; min-width: 0; }
+.track-info { flex: 1; min-width: 0; text-align: left; } /* 確保文字靠左對齊 */
 .track-name { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .track-meta { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
 .category-tag { background: var(--color-background-secondary); padding: 2px 6px; border-radius: 6px; font-size: 10px; margin-left: 5px; }
@@ -97,10 +108,7 @@ body {
 input:checked + .slider { background-color: var(--color-accent); }
 input:checked + .slider:before { transform: translateX(20px); }
 
-/* =========================================================
-   🌟 常駐三層列重新定位：緊貼鎖定的底部並精確堆疊
-========================================================= */
-/* 底部導覽列：透過彈性佈局自適應高度與底部安全間距 */
+/* 常駐三層列重新定位 */
 .bottom-nav {
   position: absolute; bottom: 0; left: 0; right: 0; 
   display: flex; justify-content: space-around; align-items: center;
@@ -117,7 +125,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 .nav-item span { font-size: 10px; font-weight: 500; }
 .nav-item.active { color: var(--color-accent); }
 
-/* 迷你播放器：以 58px 基準往上推升，完美避開下方導覽列 */
 .mini-player {
   position: absolute; 
   bottom: calc(58px + env(safe-area-inset-bottom)); 
@@ -136,7 +143,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 .mini-artist { font-size: 11px; color: var(--color-text-secondary); }
 .mini-controls { display: flex; gap: 14px; font-size: 22px; flex-shrink: 0; }
 
-/* 迷你歌詞吧：以 120px 基準往上懸浮，給予假名充裕的單行顯示區 */
 .mini-lyrics-bar {
   position: absolute; 
   bottom: calc(120px + env(safe-area-inset-bottom)); 
@@ -155,9 +161,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .mini-lyric-trans.hidden { display: none; }
 
 
-/* =========================================================
-   滿版覆蓋層：正在播放視圖
-========================================================= */
+/* 滿版覆蓋層：正在播放視圖 */
 .now-playing-page {
   position: fixed; 
   top: 100%; left: 0; width: 100%; height: 100%;
