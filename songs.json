@@ -230,5 +230,13 @@
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Zero.mp3",
     "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Zero.json"
+  },
+  {
+    "id": "N25",
+    "title": "マシンガンと羅針盤",
+    "artist": "3年E組うた担",
+    "category": "日文",
+    "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/マシンガンと羅針盤.mp3",
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マシンガンと羅針盤.json"
   }
 ]
