@@ -238,5 +238,13 @@
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/マシンガンと羅針盤.mp3",
     "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マシンガンと羅針盤.json"
+  },
+  {
+    "id": "K1",
+    "title": "Golden",
+    "artist": "Huntr/x",
+    "category": "其他",
+    "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_KR/Golden.mp3",
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_KR/Golden.json"
   }
 ]
