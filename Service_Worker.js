@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lyric-player-v3';
+const CACHE_NAME = 'lyric-player-v2.0';
 const ASSETS = [
   './',
   './index.html',

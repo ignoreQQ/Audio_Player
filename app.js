@@ -1,20 +1,19 @@
-// ==========================================
-// 1. 初始化 DOM 元素與全域變數
-// ==========================================
 const audioPlayer = document.getElementById('audio-player');
 const lyricsContainer = document.getElementById('lyrics-container');
-const globalPlayer = document.getElementById('global-player');
 const playPauseBtn = document.getElementById('play-pause-btn');
+const miniPlayBtn = document.getElementById('mini-play-btn');
+const flPlayBtn = document.getElementById('fl-play-btn'); 
 const progressBar = document.getElementById('progress-bar');
 const timeCurrentLabel = document.getElementById('time-current');
 const timeTotalLabel = document.getElementById('time-total');
 const volumeBar = document.getElementById('volume-bar');
 const volumeIcon = document.getElementById('volume-icon');
 const repeatBtn = document.getElementById('repeat-btn');
-const speeds = [0.75, 1.0, 1.25, 1.5];
+const shuffleBtn = document.getElementById('shuffle-btn');
 
-let currentCategory = 'all'; // 統一使用 currentCategory 管理狀態
+let currentCategory = 'all';
 let favoriteIds = JSON.parse(localStorage.getItem('myFavSongs')) || [];
+let recentSongIds = JSON.parse(localStorage.getItem('myRecentSongs')) || [];
 let currentSongIndexInList = 0;
 let currentPlaylist = [];
 let lyricsData = [];
@@ -23,510 +22,379 @@ let isDragging = false;
 let repeatMode = 0; 
 let showTranslation = true;
 let isShuffle = false;
-let speedIndex = 1; 
-let currentSortMode = 'default'; // 新增這行：追蹤目前的排序狀態
+let currentSortMode = 'default';
 
-// ==========================================
-// 2. 曲庫資料庫 
-// ==========================================
-const allSongs = [
-  { 
-    id: "N1", title: "Lemon", artist: "米津玄師", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json" 
-  },
-  { 
-    id: "N2", title: "ベテルギウス", artist: "優里 Yuuri", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json" 
-  },
-  { 
-    id: "N3", title: "Teacher", artist: "友成空", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Teacher.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json" 
-  },
-  { 
-    id: "N4", title: "バイバイ YESTERDAY", artist: "3年E組うた担", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/バイバイ YESTERDAY.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/バイバイ YESTERDAY.json" 
-  },
-  {
-    id: "T1", title: "壞蛋", artist: "糜先生 Mixer", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/壞蛋.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/壞蛋.json"
-  },
-  {
-    id: "T2", title: "笨蛋", artist: "糜先生 Mixer", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/笨蛋.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/笨蛋.json"
-  },
-  {
-    id: "T3", title: "嗜愛動物", artist: "糜先生 Mixer", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/嗜愛動物.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/嗜愛動物.json"
-  },
-  {
-    id: "T4", title: "長成什麼樣子算愛情", artist: "糜先生 Mixer", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/長成什麼樣子算愛情.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/長成什麼樣子算愛情.json"
-  },
-  {
-    id: "T5", title: "水星記", artist: "郭頂", category: "華語",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/水星記.mp3", 
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/水星記.json"
-  },
-  {
-    id:"N5", title: "天ノ弱", artist: "秋絵(原唱:GUMI)", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/天ノ弱.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/天ノ弱.json"
-  },
-  {
-    id:"N6", title: "光るなら", artist: "Goose House", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/光るなら.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/光るなら.json"
-  },
-  {
-    id:"N7", title: "前前前世", artist: "RADWIMPS", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/前前前世.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/前前前世.json"
-  },
-  { 
-    id:"N8", title: "旅立ちのうた", artist: "3年E組", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/旅立ちのうた.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/旅立ちのうた.json"
-  },
-  {
-    id:"N9", title: "チューリングラブ", artist:"ナナヲアカリ Feat.Sou", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/チューリングラブ feat.Sou.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/チューリングラブ feat.Sou.json"
-  },
-  {
-    id:"N10", title: "only my railgun", artist:"fripSide", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/only my railgun.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/only my railgun.json"
-  },
-  {
-    id:"N11", title: "Flyer!", artist:"FloweR", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Flyer!.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Flyer!.json"
-  },
-  {
-    id:"N12", title: "QUESTION", artist:"3年E組うた担", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/QUESTION.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/QUESTION.json"
-  },
-  {
-    id:"N13", title: "生命換装", artist:"ReoNa", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/生命換装.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/生命換装.json"
-  },
-  {
-    id:"N14", title: "夜に駆ける", artist:"YOASOBI", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/夜に駆ける.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/夜に駆ける.json"
-  },
-  {
-    id:"N15", title: "紅蓮華", artist:"LiSA", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/紅蓮華.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/紅蓮華.json"
-  },
-  {
-    id:"N16", title: "インフェルノ", artist:"Mrs. GREEN APPLE", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/インフェルノ.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/インフェルノ.json"
-  },
-  {
-    id:"N17", title: "廻廻奇譚", artist:"Eve", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/廻廻奇譚.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/廻廻奇譚.json"
-  },
-  {
-    id:"N18", title: "マリーゴールド", artist:"あいみょん", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/マリーゴールド.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マリーゴールド.json"
-  },
-  {
-    id:"N19", title: "僕が死のうと思ったのは", artist:"中島美嘉", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/僕が死のうと思ったのは.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/僕が死のうと思ったのは.json"
-  },
-  {
-    id:"N20", title: "雪の音", artist:"Novelbright", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/雪の音.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/雪の音.json"
-  },
-  {
-    id:"N21", title: "怪物", artist:"YOASOBI", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/怪物.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/怪物.json"
-  },
-  {
-    id:"N22", title: "キャラメルハート", artist:"超特急", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/キャラメルハート.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/キャラメルハート.json"
-  },
-  {
-    id:"N23", title: "Finale.", artist:"eill", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Finale.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Finale.json"
-  },
-  {
-    id:"N24", title: "零-zero-", artist:"tuki.", category: "日文",
-    audio: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Zero.mp3",
-    lyrics: "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Zero.json"
-  }
-];
+let currentPlayModeState = 0;
 
-// ==========================================
-// 3. 視圖切換
-// ==========================================
-function hideAllViews() {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+// 🌟 改為空陣列動態接收外部 JSON 資料
+let allSongs = [];
+
+function switchNav(tab) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`nav-${tab}`).classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${tab}`).classList.add('active');
+  if (tab === 'home') renderHome();
+  else if (tab === 'library') changeCategory(currentCategory);
+  else if (tab === 'search') filterSearch();
 }
 
-function showHome() { 
-  hideAllViews(); 
-  document.getElementById('home-view').classList.add('active'); 
-}
+function toggleNowPlaying(open) {
+  const overlay = document.getElementById('page-now-playing');
+  const miniLyricsBar = document.getElementById('mini-lyrics-bar');
+  const miniPlayer = document.getElementById('mini-player');
+  const bottomNav = document.querySelector('.bottom-nav');
 
-function showSettings() {
-  hideAllViews();
-  document.getElementById('settings-view').classList.add('active');
-}
-
-function showLibrary(mode) {
-  hideAllViews();
-  document.getElementById('library-view').classList.add('active');
-  document.getElementById('search-input').value = "";
-  
-  if (mode === 'favorites') {
-    document.getElementById('library-title').innerText = "我的收藏 🤍";
-    document.getElementById('category-tabs').style.display = 'none'; 
-    currentCategory = 'favorites';
-    renderSongList();
+  if (open && audioPlayer.src && audioPlayer.src !== window.location.href) {
+    overlay.classList.add('active');
+    if (miniLyricsBar) miniLyricsBar.classList.add('hidden');
+    if (miniPlayer) miniPlayer.classList.add('hidden');
+    if (bottomNav) bottomNav.classList.add('hidden');
   } else {
-    document.getElementById('library-title').innerText = "曲庫";
-    document.getElementById('category-tabs').style.display = 'flex'; 
-    changeCategory(mode === 'all' ? 'all' : mode); 
+    overlay.classList.remove('active');
+    if (miniLyricsBar) miniLyricsBar.classList.remove('hidden');
+    if (miniPlayer) miniPlayer.classList.remove('hidden');
+    if (bottomNav) bottomNav.classList.remove('hidden');
   }
 }
 
-function changeCategory(category) {
-  currentCategory = category;
-  document.querySelectorAll('.cat-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.cat === category);
-  });
-  renderSongList();
-}
+function cycleLyricsMode() {
+  currentPlayModeState = (currentPlayModeState + 1) % 3;
+  const page = document.getElementById('page-now-playing');
+  const icon = document.getElementById('mode-btn-icon');
+  const text = document.getElementById('mode-btn-text');
 
-function renderSongList(searchQuery = "") {
-  const listContainer = document.getElementById('song-list');
-  listContainer.innerHTML = ''; 
+  page.classList.remove('mode-full-lyrics', 'mode-focus-singing');
 
-  currentPlaylist = allSongs.filter(song => {
-    if (currentCategory === 'favorites' && !favoriteIds.includes(song.id)) return false;
-    if (currentCategory !== 'all' && currentCategory !== 'favorites' && song.category !== currentCategory) return false;
-    const query = searchQuery.toLowerCase();
-    return song.title.toLowerCase().includes(query) || song.artist.toLowerCase().includes(query);
-  });
-    // 👇 新增的排序邏輯 👇
-  if (currentSortMode === 'title') {
-    // 依歌名排序
-    currentPlaylist.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
-  } else if (currentSortMode === 'artist') {
-    // 依歌手排序
-    currentPlaylist.sort((a, b) => a.artist.localeCompare(b.artist, 'zh-Hant'));
+  if (currentPlayModeState === 0) {
+    icon.className = 'ti ti-photo'; text.innerText = '封面';
+  } else if (currentPlayModeState === 1) {
+    page.classList.add('mode-full-lyrics');
+    icon.className = 'ti ti-file-text'; text.innerText = '全頁歌詞';
+  } else if (currentPlayModeState === 2) {
+    page.classList.add('mode-focus-singing');
+    icon.className = 'ti ti-microphone'; text.innerText = 'KTV專注';
   }
-  // ☝️ 新增的排序邏輯 ☝️
 
-  currentPlaylist.forEach((song, index) => {
-    const li = document.createElement('li');
-    li.className = 'song-item glass-panel';
-    const isFav = favoriteIds.includes(song.id);
-    const starSymbol = isFav ? "♥" : "♡";
-    const starClass = isFav ? "fav-icon active" : "fav-icon";
+  if (currentLineIndex !== -1) {
+    const activeLine = document.getElementById(`line-${currentLineIndex}`);
+    if (activeLine) activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
 
-    li.innerHTML = `
-      <div style="flex-grow: 1;" onclick="playSong(${index})">
-        <div style="font-size: 18px; font-weight: bold;">${song.title}</div>
-        <div style="font-size: 14px; color: #555;">${song.artist} <span style="background:#eee; padding:2px 6px; border-radius:10px; font-size:10px; margin-left:5px;">${song.category || '未分類'}</span></div>
-      </div>
-      <div class="${starClass}" onclick="toggleFavorite('${song.id}', event)">${starSymbol}</div>
-    `;
-    listContainer.appendChild(li);
+const npLyricsWrapper = document.getElementById('np-lyrics-wrapper');
+npLyricsWrapper.addEventListener('click', (e) => {
+  if (currentPlayModeState === 2 && (e.target === npLyricsWrapper || e.target.id === 'lyrics-container' || e.target.id === 'ktv-pause-hint')) {
+    togglePlay();
+  }
+});
+
+function renderHome() {
+  const recRow = document.getElementById('recommend-row');
+  recRow.innerHTML = '';
+  const shuffled = [...allSongs].sort(() => 0.5 - Math.random()).slice(0, 5);
+  shuffled.forEach((song, idx) => {
+    const card = document.createElement('div');
+    card.className = 'album-card';
+    card.innerHTML = `<div class="album-thumb grad-${(idx%4)+1}"><i class="ti ti-music"></i></div>
+                      <div class="album-card-name">${song.title}</div>
+                      <div class="album-card-artist">${song.artist}</div>`;
+    card.onclick = () => playSongById(song.id);
+    recRow.appendChild(card);
+  });
+
+  const recentList = document.getElementById('recent-list');
+  recentList.innerHTML = '';
+  const recentSongs = recentSongIds.map(id => allSongs.find(s => s.id === id)).filter(Boolean);
+  if (recentSongs.length === 0) {
+    recentList.innerHTML = '<div style="text-align:center; color:var(--color-text-tertiary); font-size:13px; padding:10px 0;">尚無播放紀錄</div>';
+    return;
+  }
+  recentSongs.forEach(song => {
+    const item = document.createElement('div');
+    item.className = 'track-item';
+    item.innerHTML = `<div class="track-thumb grad-1"><i class="ti ti-music"></i></div>
+                      <div class="track-info" onclick="playSongById('${song.id}')">
+                        <div class="track-name">${song.title}</div>
+                        <div class="track-meta">${song.artist}<span class="category-tag">${song.category}</span></div>
+                      </div>`;
+    recentList.appendChild(item);
   });
 }
 
-function filterSongs() { renderSongList(document.getElementById('search-input').value); }
+function clearRecent() {
+  recentSongIds = []; localStorage.removeItem('myRecentSongs'); renderHome();
+}
+
+function changeCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('#category-tabs .cat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === cat);
+  });
+  document.getElementById('library-title').innerText = cat === 'favorites' ? "我的收藏 🤍" : "音樂庫";
+  renderCustomList('library-song-list', cat, '');
+}
+
+function filterSearch() {
+  const query = document.getElementById('search-input').value;
+  renderCustomList('search-result-list', 'all', query);
+}
+
 function changeSortMode(mode) {
   currentSortMode = mode;
-  renderSongList(document.getElementById('search-input').value);
+  if (document.getElementById('page-search').classList.contains('active')) filterSearch();
+  else changeCategory(currentCategory);
 }
-function toggleFavorite(songId, event) {
-  event.stopPropagation(); 
+
+function renderCustomList(containerId, cat, query) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  let filtered = allSongs.filter(s => {
+    if (cat === 'favorites' && !favoriteIds.includes(s.id)) return false;
+    if (cat !== 'all' && cat !== 'favorites' && s.category !== cat) return false;
+    return s.title.toLowerCase().includes(query.toLowerCase()) || s.artist.toLowerCase().includes(query.toLowerCase());
+  });
+
+  if (currentSortMode === 'title') filtered.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
+  else if (currentSortMode === 'artist') filtered.sort((a, b) => a.artist.localeCompare(b.artist, 'zh-Hant'));
+
+  currentPlaylist = filtered;
+  filtered.forEach((song, idx) => {
+    const isFav = favoriteIds.includes(song.id);
+    const li = document.createElement('li');
+    li.className = 'track-item';
+    li.innerHTML = `<div class="track-thumb grad-1"><i class="ti ti-music"></i></div>
+                    <div class="track-info" onclick="playSong(${idx})">
+                      <div class="track-name">${song.title}</div>
+                      <div class="track-meta">${song.artist}<span class="category-tag">${song.category}</span></div>
+                    </div>
+                    <i class="ti ti-heart ${isFav ? 'active' : ''}" onclick="toggleFavFromList('${song.id}', event)"></i>`;
+    container.appendChild(li);
+  });
+}
+
+function toggleFavFromList(songId, event) {
+  event.stopPropagation();
   if (favoriteIds.includes(songId)) favoriteIds = favoriteIds.filter(id => id !== songId);
   else favoriteIds.push(songId);
   localStorage.setItem('myFavSongs', JSON.stringify(favoriteIds));
-  filterSongs(); 
+  
+  if (document.getElementById('page-library').classList.contains('active')) changeCategory(currentCategory);
+  if (document.getElementById('page-search').classList.contains('active')) filterSearch();
+  
+  const cur = currentPlaylist[currentSongIndexInList];
+  if (cur && cur.id === songId) updateFavBtnUI(favoriteIds.includes(songId));
 }
 
-// ==========================================
-// 4. 播放控制邏輯
-// ==========================================
+function toggleCurrentFavorite() {
+  const cur = currentPlaylist[currentSongIndexInList];
+  if (!cur) return;
+  if (favoriteIds.includes(cur.id)) favoriteIds = favoriteIds.filter(id => id !== cur.id);
+  else favoriteIds.push(cur.id);
+  localStorage.setItem('myFavSongs', JSON.stringify(favoriteIds));
+  updateFavBtnUI(favoriteIds.includes(cur.id));
+  if (document.getElementById('page-library').classList.contains('active')) changeCategory(currentCategory);
+}
+
+function updateFavBtnUI(isFav) {
+  document.getElementById('np-fav-btn').className = isFav ? 'ti ti-heart active' : 'ti ti-heart';
+}
+
+function playSongById(id) {
+  const song = allSongs.find(s => s.id === id);
+  if (!song) return; currentPlaylist = [song]; playSong(0);
+}
+
 function playSong(index) {
-  if (index < 0 || index >= currentPlaylist.length) return;
-  currentSongIndexInList = index;
   const song = currentPlaylist[index];
+  if (!song) return; currentSongIndexInList = index;
   
-  document.getElementById('ui-title').innerText = song.title;
-  document.getElementById('ui-artist').innerText = song.artist;
+  document.getElementById('mini-title').innerText = song.title;
+  document.getElementById('mini-artist').innerText = song.artist;
+  document.getElementById('np-title').innerText = song.title;
+  document.getElementById('np-artist').innerText = song.artist;
+  document.getElementById('np-category').innerText = song.category || '未分類';
   
-  globalPlayer.classList.add('active-player');
-  globalPlayer.classList.add('mini-mode'); 
-  document.getElementById('toggle-icon').innerText = '🔼'; 
-  
-  showPlayerView(); 
-  
-  audioPlayer.src = song.audio;
-  audioPlayer.playbackRate = speeds[speedIndex]; 
-  fetchLyrics(song.lyrics);
-  audioPlayer.play();
-  playPauseBtn.innerText = '⏸';
+  document.getElementById('fl-title').innerText = song.title;
+  document.getElementById('fl-artist').innerText = song.artist;
 
-  updateMediaSession(song);
-}
+  updateFavBtnUI(favoriteIds.includes(song.id));
+  
+  recentSongIds = [song.id, ...recentSongIds.filter(i => i !== song.id)].slice(0, 20);
+  localStorage.setItem('myRecentSongs', JSON.stringify(recentSongIds));
+  if (document.getElementById('page-home').classList.contains('active')) renderHome();
 
-function showPlayerView() {
-  hideAllViews();
-  document.getElementById('player-view').classList.add('active');
+  audioPlayer.src = song.audio; fetchLyrics(song.lyrics); audioPlayer.play(); updatePlayPauseUI(true);
+  
+  toggleNowPlaying(true);
 }
 
 function togglePlay() {
-  if (audioPlayer.paused) { audioPlayer.play(); playPauseBtn.innerText = '⏸'; }
-  else { audioPlayer.pause(); playPauseBtn.innerText = '▶️'; }
+  if (audioPlayer.paused) { audioPlayer.play(); updatePlayPauseUI(true); }
+  else { audioPlayer.pause(); updatePlayPauseUI(false); }
+}
+
+function updatePlayPauseUI(playing) {
+  const icon = playing ? 'ti ti-player-pause' : 'ti ti-player-play';
+  playPauseBtn.innerHTML = `<i class="${icon}"></i>`;
+  miniPlayBtn.className = icon;
+  if (flPlayBtn) flPlayBtn.className = icon; 
 }
 
 function toggleRepeat() {
-  repeatMode = (repeatMode + 1) % 2;
-  repeatBtn.innerText = (repeatMode === 0) ? '🔁' : '🔂';
-  repeatBtn.classList.toggle('active', repeatMode === 1);
+  repeatMode = (repeatMode + 1) % 2; repeatBtn.classList.toggle('active', repeatMode === 1);
+  repeatBtn.innerHTML = `<i class="${repeatMode === 1 ? 'ti ti-repeat-once' : 'ti ti-repeat'}"></i>`;
 }
 
 function toggleShuffle() {
-  isShuffle = !isShuffle;
-  const shuffleBtn = document.getElementById('shuffle-btn');
-  shuffleBtn.classList.toggle('active', isShuffle);
+  isShuffle = !isShuffle; shuffleBtn.classList.toggle('active', isShuffle);
 }
 
 function playNext() { 
-  let nextIndex;
-  if (isShuffle) {
-    do { nextIndex = Math.floor(Math.random() * currentPlaylist.length); } 
-    while (nextIndex === currentSongIndexInList && currentPlaylist.length > 1);
-  } else {
-    nextIndex = (currentSongIndexInList + 1) % currentPlaylist.length;
-  }
-  playSong(nextIndex); 
+  if (currentPlaylist.length === 0) return;
+  let nextIdx = isShuffle && currentPlaylist.length > 1 ? 
+    Math.floor(Math.random() * currentPlaylist.length) : (currentSongIndexInList + 1) % currentPlaylist.length;
+  playSong(nextIdx); 
 }
 
-function playPrevious() { playSong((currentSongIndexInList - 1 + currentPlaylist.length) % currentPlaylist.length); }
-function skipTime(seconds) { audioPlayer.currentTime += seconds; }
-
-// ==========================================
-// 5. 音量與進度條監聽
-// ==========================================
-volumeBar.addEventListener('input', (e) => {
-  const vol = e.target.value / 100;
-  audioPlayer.volume = vol;
-  localStorage.setItem('mySavedVolume', vol);
-  updateVolumeIcon(vol);
-});
-
-function toggleMute() {
-  if (audioPlayer.volume > 0) {
-    audioPlayer.dataset.lastVol = audioPlayer.volume;
-    audioPlayer.volume = 0;
-    volumeBar.value = 0;
-  } else {
-    const restoreVol = audioPlayer.dataset.lastVol || 1;
-    audioPlayer.volume = restoreVol;
-    volumeBar.value = restoreVol * 100;
-  }
-  localStorage.setItem('mySavedVolume', audioPlayer.volume);
-  updateVolumeIcon(audioPlayer.volume);
+function playPrevious() { 
+  if (currentPlaylist.length === 0) return;
+  playSong((currentSongIndexInList - 1 + currentPlaylist.length) % currentPlaylist.length); 
 }
-
-function updateVolumeIcon(vol) {
-  if (vol === 0) volumeIcon.innerText = '🔇';
-  else if (vol < 0.5) volumeIcon.innerText = '🔉';
-  else volumeIcon.innerText = '🔊';
-}
-
-audioPlayer.addEventListener('durationchange', () => {
-  if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
-    timeTotalLabel.innerText = formatTime(audioPlayer.duration);
-  }
-});
 
 progressBar.addEventListener('input', (e) => {
   isDragging = true;
-  if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
-    const targetTime = (e.target.value / 100) * audioPlayer.duration;
-    timeCurrentLabel.innerText = formatTime(targetTime);
-  }
+  if (audioPlayer.duration) timeCurrentLabel.innerText = formatTime((e.target.value / 100) * audioPlayer.duration);
 });
 
 progressBar.addEventListener('change', (e) => {
   isDragging = false;
-  if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
-    audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
-  }
+  if (audioPlayer.duration) audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
 });
 
+volumeBar.addEventListener('input', (e) => {
+  audioPlayer.volume = e.target.value / 100; localStorage.setItem('mySavedVolume', audioPlayer.volume); updateVolumeIcon(audioPlayer.volume);
+});
+
+function toggleMute() {
+  if (audioPlayer.volume > 0) { audioPlayer.dataset.lastVol = audioPlayer.volume; audioPlayer.volume = 0; } 
+  else { audioPlayer.volume = audioPlayer.dataset.lastVol || 1; }
+  volumeBar.value = audioPlayer.volume * 100; localStorage.setItem('mySavedVolume', audioPlayer.volume); updateVolumeIcon(audioPlayer.volume);
+}
+
+function updateVolumeIcon(v) {
+  const icon = document.getElementById('volume-icon');
+  if (v === 0) icon.className = 'ti ti-volume-3'; else if (v < 0.5) icon.className = 'ti ti-volume-2'; else icon.className = 'ti ti-volume';
+}
+
 audioPlayer.addEventListener('timeupdate', () => {
-  if (audioPlayer.ended) { 
-    if (repeatMode === 1) { audioPlayer.currentTime = 0; audioPlayer.play(); }
-    else { playNext(); }
-  }
-  
-  if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
-    if (timeTotalLabel.innerText === "0:00") {
-      timeTotalLabel.innerText = formatTime(audioPlayer.duration);
-    }
-    
-    if (!isDragging) {
-      const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-      progressBar.value = percent;
-      timeCurrentLabel.innerText = formatTime(audioPlayer.currentTime);
-    }
+  if (audioPlayer.ended) {
+    if (repeatMode === 1) { audioPlayer.currentTime = 0; audioPlayer.play(); } else playNext();
   }
 
-  const activeIndex = lyricsData.findLastIndex(line => audioPlayer.currentTime >= line.startTime);
-  if (activeIndex !== currentLineIndex && activeIndex !== -1) {
-    const oldLine = document.getElementById(`line-${currentLineIndex}`);
-    if(oldLine) oldLine.classList.remove('active');
+  if (audioPlayer.duration && !isDragging) {
+    progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    timeCurrentLabel.innerText = formatTime(audioPlayer.currentTime); timeTotalLabel.innerText = formatTime(audioPlayer.duration);
+  }
+
+  const activeIndex = lyricsData.findLastIndex(l => audioPlayer.currentTime >= l.startTime);
+  if (activeIndex !== -1 && activeIndex !== currentLineIndex) {
+    const firstLine = document.getElementById('line-0');
+    if (firstLine) firstLine.classList.remove('ready-line');
+
     currentLineIndex = activeIndex;
+    document.querySelectorAll('.lyric-line').forEach(l => l.classList.remove('active'));
     const activeLine = document.getElementById(`line-${currentLineIndex}`);
-    if(activeLine) {
+    if (activeLine) {
       activeLine.classList.add('active');
       activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+    
+    const cur = lyricsData[currentLineIndex];
+    if (cur) {
+      document.getElementById('mini-lyric-text').innerHTML = cur.words.map(w => `<ruby>${w.text}<rt>${w.furigana || ''}</rt></ruby>`).join('');
+      const originalText = cur.words.map(w => w.text).join('');
+      const transEl = document.getElementById('mini-lyric-trans');
+      if (cur.translation && cur.translation !== originalText) {
+        transEl.innerText = cur.translation; transEl.classList.toggle('hidden', !showTranslation);
+      } else { transEl.classList.add('hidden'); }
+    }
   }
 });
 
-// ==========================================
-// 6. 輔助功能
-// ==========================================
-function formatTime(seconds) {
-  if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${s < 10 ? '0' : ''}${s}`;
-}
-
 async function fetchLyrics(url) {
-  lyricsContainer.innerHTML = '<div style="text-align:center; color:#888;">歌詞載入中...</div>';
+  lyricsContainer.innerHTML = '<div style="text-align:center; color:var(--color-text-secondary); font-size:14px;">歌詞載入中...</div>';
   currentLineIndex = -1;
   try {
-    const response = await fetch(url);
-    lyricsData = await response.json();
-    lyricsContainer.innerHTML = ''; 
-    lyricsData.forEach((line, index) => {
-      const lineDiv = document.createElement('div');
-      lineDiv.className = 'lyric-line';
-      lineDiv.id = `line-${index}`;
-      
-      let wordsHTML = line.words.map(w => `<ruby>${w.text}<rt>${w.furigana || ''}</rt></ruby>`).join('');
-      
-      let originalText = line.words.map(w => w.text).join('');
+    const res = await fetch(url); lyricsData = await res.json(); lyricsContainer.innerHTML = '';
+    lyricsData.forEach((line, idx) => {
+      const lineDiv = document.createElement('div'); lineDiv.className = 'lyric-line'; lineDiv.id = `line-${idx}`;
+      const wordsHTML = line.words.map(w => `<ruby>${w.text}<rt>${w.furigana || ''}</rt></ruby>`).join('');
+      const originalText = line.words.map(w => w.text).join('');
       let transHTML = '';
-      
       if (line.translation && line.translation.trim() !== '' && line.translation !== originalText) {
-        const hiddenClass = showTranslation ? '' : 'hidden';
-        transHTML = `<div class="translation ${hiddenClass}">${line.translation}</div>`;
+        transHTML = `<div class="translation ${showTranslation ? '' : 'hidden'}">${line.translation}</div>`;
       }
-      
-      // 組合最終的 HTML
       lineDiv.innerHTML = `<div>${wordsHTML}</div>${transHTML}`;
-      
-      lineDiv.onclick = () => { audioPlayer.currentTime = line.startTime + 0.01; audioPlayer.play(); };
+      lineDiv.onclick = (e) => {
+        e.stopPropagation(); audioPlayer.currentTime = line.startTime + 0.01; audioPlayer.play(); updatePlayPauseUI(true);
+      };
       lyricsContainer.appendChild(lineDiv);
     });
-  } catch (e) { lyricsContainer.innerHTML = "歌詞載入失敗"; }
-}
 
-function updateMediaSession(song) {
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: song.title, artist: song.artist, album: '日文歌學習',
-      artwork: [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }]
-    });
-    navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
-    navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
-    navigator.mediaSession.setActionHandler('previoustrack', () => playPrevious());
-    navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
+    setTimeout(() => {
+      const firstLine = document.getElementById('line-0'); if (firstLine) firstLine.classList.add('ready-line');
+    }, 100);
+
+  } catch (e) {
+    lyricsContainer.innerHTML = '<div style="text-align:center; color:var(--color-text-secondary); font-size:14px;">純音樂或載入失敗</div>';
   }
 }
 
-// ==========================================
-// 7. 迷你播放器切換
-// ==========================================
-function togglePlayerMode() {
-  globalPlayer.classList.toggle('mini-mode');
-  const icon = document.getElementById('toggle-icon');
-  
-  if (globalPlayer.classList.contains('mini-mode')) {
-    icon.innerText = '🔼'; 
-  } else {
-    icon.innerText = '🔽'; 
-  }
+function formatTime(s) {
+  if (isNaN(s)) return "0:00"; const m = Math.floor(s / 60); const sec = Math.floor(s % 60); return `${m}:${sec < 10 ? '0' : ''}${sec}`;
 }
 
-// ==========================================
-// 8. 系統設定 (合併音量與字體大小記憶)
-// ==========================================
-function changeFontSize(baseSize) {
-  const size = parseInt(baseSize);
+function changeFontSize(s) {
+  const size = parseInt(s);
   document.documentElement.style.setProperty('--lyric-font-size', size + 'px');
   document.documentElement.style.setProperty('--lyric-ruby-size', Math.max(10, size * 0.5) + 'px');
   document.documentElement.style.setProperty('--lyric-trans-size', Math.max(12, size * 0.65) + 'px');
-  
-  localStorage.setItem('myLyricFontSize', size); 
+  localStorage.setItem('myLyricFontSize', size);
 }
+
+function toggleTranslationSetting(c) {
+  showTranslation = c; localStorage.setItem('myShowTranslation', c);
+  document.querySelectorAll('.translation').forEach(el => el.classList.toggle('hidden', !c));
+  const miniTrans = document.getElementById('mini-lyric-trans');
+  if (miniTrans && miniTrans.innerText.trim() !== '') miniTrans.classList.toggle('hidden', !c);
+}
+
 function initSettings() {
-  // 1. 讀取音量設定
-  let savedVolume = localStorage.getItem('mySavedVolume');
-  if (savedVolume !== null) {
-    audioPlayer.volume = parseFloat(savedVolume);
-    volumeBar.value = audioPlayer.volume * 100;
-    updateVolumeIcon(audioPlayer.volume);
-  }
+  let savedVol = localStorage.getItem('mySavedVolume');
+  if (savedVol !== null) { audioPlayer.volume = parseFloat(savedVol); volumeBar.value = audioPlayer.volume * 100; updateVolumeIcon(audioPlayer.volume); }
+  let savedSize = localStorage.getItem('myLyricFontSize');
+  if (savedSize) { document.getElementById('font-size-slider').value = savedSize; changeFontSize(savedSize); }
+  let savedTrans = localStorage.getItem('myShowTranslation');
+  if (savedTrans !== null) { showTranslation = savedTrans === 'true'; document.getElementById('translation-toggle').checked = showTranslation; toggleTranslationSetting(showTranslation); }
+  renderHome();
+}
 
-  // 2. 讀取字體大小設定
-  let savedFontSize = localStorage.getItem('myLyricFontSize');
-  if (savedFontSize) {
-    document.getElementById('font-size-slider').value = savedFontSize;
-    changeFontSize(savedFontSize);
-  }
-
-  // 🌟 3. 讀取翻譯顯示設定
-  let savedTranslation = localStorage.getItem('myShowTranslation');
-  if (savedTranslation !== null) {
-    showTranslation = (savedTranslation === 'true'); // localStorage 存的是字串
-    document.getElementById('translation-toggle').checked = showTranslation;
-    toggleTranslationSetting(showTranslation); // 套用到畫面上
+// 🌟 新增非同步初始化流程，確保讀取完成後再渲染介面
+async function loadSongsAndInit() {
+  try {
+    const response = await fetch('songs.json');
+    if (!response.ok) throw new Error('無法讀取歌單檔案');
+    allSongs = await response.json();
+    initSettings();
+  } catch (error) {
+    console.error('載入歌單失敗:', error);
+    if (lyricsContainer) {
+      lyricsContainer.innerHTML = '<div style="text-align:center; color:var(--color-text-secondary); font-size:14px;">載入歌單失敗，請確認 songs.json 檔案是否存在且格式正確。</div>';
+    }
   }
 }
 
-function toggleTranslationSetting(isChecked) {
-  showTranslation = isChecked;
-  localStorage.setItem('myShowTranslation', isChecked); // 記憶到手機端
-  
-  // 立即更新畫面上所有的翻譯區塊 (包含預覽區塊和歌詞區塊)
-  document.querySelectorAll('.translation').forEach(el => {
-    el.classList.toggle('hidden', !showTranslation);
-  });
-}
-
-// 執行初始化
-initSettings();
+// 觸發載入
+loadSongsAndInit();
