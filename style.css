@@ -13,26 +13,34 @@
   --lyric-trans-size: 16px;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  height: 100%; width: 100%;
+  margin: 0; padding: 0;
+  overflow: hidden;
+}
+
 body { 
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
   background: var(--color-background-secondary); 
-  height: 100vh; overflow: hidden; 
+  /* 🌟 核心防禦：絕對鎖定可視螢幕範圍，徹底消滅 iOS 獨立模式下 100vh 往下沉的裁切 Bug */
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
 }
 
-/* 將主體應用程式限制在中央外框 */
+/* 將主體應用程式精準鎖死在固定視窗內 */
 .app-container {
-  display: flex; flex-direction: column; height: 100vh; max-width: 500px;
-  margin: 0 auto; background: var(--color-background-primary);
-  position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.05);
+  display: flex; flex-direction: column; 
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  max-width: 500px; margin: 0 auto; 
+  background: var(--color-background-primary);
+  overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.05);
 }
 
 .screen { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
 
-/* 🌟 修正頁面滾動底部留白，讓出完美空間給上方堆疊的三排常駐元件 */
+/* 確保底端列表內容完整呈現在迷你歌詞吧上方 */
 .page { 
   display: none; flex: 1; flex-direction: column; overflow-y: auto; 
-  padding-bottom: calc(180px + env(safe-area-inset-bottom)); 
+  padding-bottom: calc(185px + env(safe-area-inset-bottom)); 
   width: 100%; box-sizing: border-box;
 }
 .page.active { display: flex; }
@@ -90,28 +98,30 @@ input:checked + .slider { background-color: var(--color-accent); }
 input:checked + .slider:before { transform: translateX(20px); }
 
 /* =========================================================
-   🌟 常駐底層元件：重新精算堆疊高度與 iOS 安全區域保護間距
+   🌟 常駐三層列重新定位：緊貼鎖定的底部並精確堆疊
 ========================================================= */
-/* 底部導覽列：佔據最下方基礎層 */
+/* 底部導覽列：透過彈性佈局自適應高度與底部安全間距 */
 .bottom-nav {
-  position: absolute; bottom: 0; left: 0; right: 0; display: flex;
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); 
-  height: calc(56px + env(safe-area-inset-bottom));
-  background: rgba(255, 255, 255, 0.95); border-top: 1px solid var(--color-border-tertiary); z-index: 950;
-  box-sizing: border-box; transition: opacity 0.3s;
+  position: absolute; bottom: 0; left: 0; right: 0; 
+  display: flex; justify-content: space-around; align-items: center;
+  padding-top: 8px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--color-border-tertiary);
+  z-index: 950; box-sizing: border-box; transition: opacity 0.3s;
 }
 .bottom-nav.hidden { opacity: 0; pointer-events: none; }
-.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: var(--color-text-tertiary); }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; color: var(--color-text-tertiary); }
 .nav-item i { font-size: 22px; }
 .nav-item span { font-size: 10px; font-weight: 500; }
 .nav-item.active { color: var(--color-accent); }
 
-/* 迷你播放器：嚴格鎖定在導覽列正上方，加入精細邊距避開橫條干擾 */
+/* 迷你播放器：以 58px 基準往上推升，完美避開下方導覽列 */
 .mini-player {
   position: absolute; 
-  bottom: calc(62px + env(safe-area-inset-bottom)); 
-  left: 12px; right: 12px;
-  height: 54px;
+  bottom: calc(58px + env(safe-area-inset-bottom)); 
+  left: 12px; right: 12px; height: 54px;
   background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
   border: 1px solid var(--color-border-secondary); border-radius: 16px;
   padding: 0 12px; display: flex; align-items: center; gap: 12px;
@@ -126,12 +136,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 .mini-artist { font-size: 11px; color: var(--color-text-secondary); }
 .mini-controls { display: flex; gap: 14px; font-size: 22px; flex-shrink: 0; }
 
-/* 迷你歌詞列：精確懸浮在迷你播放器的頂部，保有獨立且無擠壓的單行空間 */
+/* 迷你歌詞吧：以 120px 基準往上懸浮，給予假名充裕的單行顯示區 */
 .mini-lyrics-bar {
   position: absolute; 
-  bottom: calc(122px + env(safe-area-inset-bottom)); 
-  left: 12px; right: 12px;
-  min-height: 48px;
+  bottom: calc(120px + env(safe-area-inset-bottom)); 
+  left: 12px; right: 12px; min-height: 48px;
   background: rgba(244, 245, 246, 0.95); backdrop-filter: blur(10px);
   border: 1px solid var(--color-border-tertiary); border-radius: 14px;
   padding: 6px 14px; text-align: center; z-index: 890; 
