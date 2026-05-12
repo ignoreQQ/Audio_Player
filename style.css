@@ -29,9 +29,10 @@ body {
 
 .screen { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
 
+/* 🌟 修正頁面滾動底部留白，讓出完美空間給上方堆疊的三排常駐元件 */
 .page { 
   display: none; flex: 1; flex-direction: column; overflow-y: auto; 
-  padding-bottom: 220px; 
+  padding-bottom: calc(180px + env(safe-area-inset-bottom)); 
   width: 100%; box-sizing: border-box;
 }
 .page.active { display: flex; }
@@ -88,41 +89,14 @@ body {
 input:checked + .slider { background-color: var(--color-accent); }
 input:checked + .slider:before { transform: translateX(20px); }
 
-/* 常駐層元件 */
-.mini-lyrics-bar {
-  position: absolute; bottom: calc(130px + env(safe-area-inset-bottom)); left: 12px; right: 12px;
-  background: rgba(244, 245, 246, 0.95); backdrop-filter: blur(10px);
-  border: 1px solid var(--color-border-tertiary); border-radius: 14px;
-  padding: 8px 16px; text-align: center; z-index: 890; min-height: 50px;
-  display: flex; flex-direction: column; justify-content: center; cursor: pointer;
-  box-sizing: border-box; overflow: hidden; transition: opacity 0.3s, transform 0.3s;
-}
-.mini-lyrics-bar.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
-.mini-lyrics-bar ruby { font-size: 15px; font-weight: 600; display: ruby; ruby-align: center; } 
-.mini-lyrics-bar rt { font-size: 9px; color: var(--color-accent); display: ruby-text; }
-.mini-lyric-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-.mini-lyric-trans { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-.mini-lyric-trans.hidden { display: none; }
-
-.mini-player {
-  position: absolute; bottom: calc(65px + env(safe-area-inset-bottom)); left: 12px; right: 12px;
-  background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
-  border: 1px solid var(--color-border-secondary); border-radius: 18px;
-  padding: 10px 14px; display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08); z-index: 900; cursor: pointer;
-  box-sizing: border-box; transition: opacity 0.3s, transform 0.3s;
-}
-.mini-player.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
-.mini-art { width: 40px; height: 40px; border-radius: 12px; background: var(--color-accent-grad); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.mini-art i { color: white; }
-.mini-info { flex: 1; min-width: 0; }
-.mini-song { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mini-artist { font-size: 11px; color: var(--color-text-secondary); }
-.mini-controls { display: flex; gap: 15px; font-size: 24px; flex-shrink: 0; }
-
+/* =========================================================
+   🌟 常駐底層元件：重新精算堆疊高度與 iOS 安全區域保護間距
+========================================================= */
+/* 底部導覽列：佔據最下方基礎層 */
 .bottom-nav {
   position: absolute; bottom: 0; left: 0; right: 0; display: flex;
-  padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); height: calc(60px + env(safe-area-inset-bottom));
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); 
+  height: calc(56px + env(safe-area-inset-bottom));
   background: rgba(255, 255, 255, 0.95); border-top: 1px solid var(--color-border-tertiary); z-index: 950;
   box-sizing: border-box; transition: opacity 0.3s;
 }
@@ -132,22 +106,60 @@ input:checked + .slider:before { transform: translateX(20px); }
 .nav-item span { font-size: 10px; font-weight: 500; }
 .nav-item.active { color: var(--color-accent); }
 
+/* 迷你播放器：嚴格鎖定在導覽列正上方，加入精細邊距避開橫條干擾 */
+.mini-player {
+  position: absolute; 
+  bottom: calc(62px + env(safe-area-inset-bottom)); 
+  left: 12px; right: 12px;
+  height: 54px;
+  background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-secondary); border-radius: 16px;
+  padding: 0 12px; display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06); z-index: 900; cursor: pointer;
+  box-sizing: border-box; transition: opacity 0.3s, transform 0.3s;
+}
+.mini-player.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+.mini-art { width: 36px; height: 36px; border-radius: 10px; background: var(--color-accent-grad); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mini-art i { color: white; font-size: 18px; }
+.mini-info { flex: 1; min-width: 0; }
+.mini-song { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mini-artist { font-size: 11px; color: var(--color-text-secondary); }
+.mini-controls { display: flex; gap: 14px; font-size: 22px; flex-shrink: 0; }
+
+/* 迷你歌詞列：精確懸浮在迷你播放器的頂部，保有獨立且無擠壓的單行空間 */
+.mini-lyrics-bar {
+  position: absolute; 
+  bottom: calc(122px + env(safe-area-inset-bottom)); 
+  left: 12px; right: 12px;
+  min-height: 48px;
+  background: rgba(244, 245, 246, 0.95); backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border-tertiary); border-radius: 14px;
+  padding: 6px 14px; text-align: center; z-index: 890; 
+  display: flex; flex-direction: column; justify-content: center; cursor: pointer;
+  box-sizing: border-box; overflow: hidden; transition: opacity 0.3s, transform 0.3s;
+}
+.mini-lyrics-bar.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+.mini-lyrics-bar ruby { font-size: 14px; font-weight: 600; display: ruby; ruby-align: center; } 
+.mini-lyrics-bar rt { font-size: 9px; color: var(--color-accent); display: ruby-text; }
+.mini-lyric-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+.mini-lyric-trans { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+.mini-lyric-trans.hidden { display: none; }
+
 
 /* =========================================================
-   🌟 核心修正：升級為強勢 fixed 滿版覆蓋，確保點擊收起順暢
+   滿版覆蓋層：正在播放視圖
 ========================================================= */
 .now-playing-page {
-  position: fixed; /* 🌟 徹底脫離文件流，避免被底部導覽列穿透覆蓋 */
+  position: fixed; 
   top: 100%; left: 0; width: 100%; height: 100%;
   background: var(--color-background-primary); 
-  z-index: 999999; /* 🌟 給定極致層級，保證壓過所有底層結構 */
+  z-index: 999999; 
   transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   display: flex; flex-direction: column;
   overflow: hidden;
 }
 .now-playing-page.active { top: 0; }
 
-/* 讓內部區域限制在中央 500px 的手機質感框內對齊 */
 .now-playing-content { 
   max-width: 500px; width: 100%; height: 100%; margin: 0 auto;
   padding: calc(20px + env(safe-area-inset-top)) 24px calc(20px + env(safe-area-inset-bottom)); 
@@ -155,7 +167,6 @@ input:checked + .slider:before { transform: translateX(20px); }
   box-sizing: border-box;
 }
 
-/* 確保頂層按鈕擁有絕對優先的點擊回應權 */
 .np-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; width: 100%; z-index: 10; }
 .np-header i.ti-chevron-down { font-size: 28px; color: var(--color-text-secondary); cursor: pointer; padding: 8px; margin-left: -8px; }
 
