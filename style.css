@@ -141,8 +141,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .mini-lyric-trans { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
 .mini-lyric-trans.hidden { display: none; }
 
-
-/* 滿版覆蓋層：正在播放視圖 */
+/* 正在播放視圖 */
 .now-playing-page {
   position: fixed; 
   top: 100%; left: 0; width: 100%; height: 100%;
@@ -192,40 +191,19 @@ input[type=range] { -webkit-appearance: none; width: 100%; height: 5px; border-r
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--color-text-primary); cursor: pointer; }
 .time-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-tertiary); margin-top: 8px; font-family: monospace; }
 
-/* 🌟 核心修正：強制控制列容器採用空間均分，並為按鈕賦予同等基礎尺寸，確保正中黃金對齊 */
-.controls { 
-  display: flex; justify-content: space-between; align-items: center; 
-  margin-bottom: 20px; flex-shrink: 0; width: 100%; padding: 0 10px; box-sizing: border-box;
-}
-.play-btn { 
-  width: 64px; height: 64px; border-radius: 50%; background: var(--color-text-primary); color: white; 
-  border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; 
-  cursor: pointer; outline: none; flex-shrink: 0; margin: 0 10px;
-}
-.ctrl-btn { 
-  background: none; border: none; cursor: pointer; outline: none; 
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  width: 40px; height: 40px; /* 給定固定長寬確保兩翼空間對稱 */
-}
+.controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; width: 100%; padding: 0 10px; box-sizing: border-box; }
+.play-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--color-text-primary); color: white; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none; flex-shrink: 0; margin: 0 10px; }
+.ctrl-btn { background: none; border: none; cursor: pointer; outline: none; display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; }
 .ctrl-btn i { font-size: 26px; color: var(--color-text-secondary); }
 .ctrl-btn.active i { color: var(--color-accent); }
 
 .volume-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-shrink: 0; padding: 0 5px; width: 100%; box-sizing: border-box; }
 .volume-row i { font-size: 20px; color: var(--color-text-secondary); cursor: pointer; width: 24px; text-align: center; flex-shrink: 0; }
 
-.lyrics-wrapper { 
-  flex: 1; background: var(--color-background-secondary); border-radius: 20px; 
-  padding: 15px; overflow-y: auto; min-height: 180px; transition: all 0.3s ease; 
-  width: 100%; box-sizing: border-box;
-}
-
+.lyrics-wrapper { flex: 1; background: var(--color-background-secondary); border-radius: 20px; padding: 15px; overflow-y: auto; min-height: 180px; transition: all 0.3s ease; width: 100%; box-sizing: border-box; }
 #lyrics-container { width: 100%; box-sizing: border-box; }
 
-.lyric-line { 
-  text-align: center; margin: 24px 0; opacity: 0.3; transition: 0.3s; cursor: pointer; 
-  padding: 0 10px; width: 100%; box-sizing: border-box;
-  word-break: break-word; overflow-wrap: anywhere; white-space: normal;
-}
+.lyric-line { text-align: center; margin: 24px 0; opacity: 0.3; transition: 0.3s; cursor: pointer; padding: 0 10px; width: 100%; box-sizing: border-box; word-break: break-word; overflow-wrap: anywhere; white-space: normal; }
 .lyric-line.active { opacity: 1; transform: scale(1.05); }
 
 ruby { display: ruby; ruby-align: center; font-size: var(--lyric-font-size); font-weight: 600; margin-right: 3px; }
@@ -237,17 +215,17 @@ rt { display: ruby-text; font-size: var(--lyric-ruby-size); color: var(--color-a
 .full-lyrics-mini-bar { display: none; }
 
 
-/* ====== 🌟 進階擴充：8段設定專屬面板樣式 (採網格排版美觀好按) ====== */
+/* =========================================================
+   🌟 YouTube 風格設定面板 (Action Sheet) 專屬多層次設計
+========================================================= */
 .action-sheet-backdrop {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 9999999; 
+  background: rgba(0, 0, 0, 0.4); z-index: 9999999; 
   display: flex; flex-direction: column; justify-content: flex-end;
   opacity: 0; pointer-events: none; transition: opacity 0.3s;
 }
-.action-sheet-backdrop.active {
-  opacity: 1; pointer-events: auto;
-}
+.action-sheet-backdrop.active { opacity: 1; pointer-events: auto; }
+
 .action-sheet-content {
   background: var(--color-background-primary);
   border-radius: 24px 24px 0 0;
@@ -255,35 +233,52 @@ rt { display: ruby-text; font-size: var(--lyric-ruby-size); color: var(--color-a
   max-width: 500px; width: 100%; margin: 0 auto;
   transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   box-shadow: 0 -10px 25px rgba(0,0,0,0.1); box-sizing: border-box;
+  position: relative; overflow: hidden;
 }
-.action-sheet-backdrop.active .action-sheet-content {
-  transform: translateY(0);
-}
+.action-sheet-backdrop.active .action-sheet-content { transform: translateY(0); }
+
 .action-sheet-header {
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 16px; font-weight: 600; margin-bottom: 20px;
+  font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-tertiary);
 }
 .action-sheet-header i { font-size: 22px; color: var(--color-text-secondary); cursor: pointer; }
 
-.action-sheet-section { margin-bottom: 15px; }
-.section-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px; font-weight: 500; text-align: left; }
-/* 🌟 倍速選項改為 4行 x 2列 網格佈局 */
-.speed-options { 
-  display: grid; 
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 10px; 
+/* 設定內部分頁切換 */
+.sheet-menu-page { display: none; }
+.sheet-menu-page.active { display: block; animation: sheetFadeIn 0.2s ease; }
+
+@keyframes sheetFadeIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
-.speed-btn {
-  padding: 12px 0; border-radius: 12px;
-  border: 1px solid var(--color-border-secondary);
-  background: var(--color-background-secondary);
-  font-size: 13px; font-weight: 600; color: var(--color-text-primary);
+
+/* 主選單列項目設計 */
+.sheet-option-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 4px; border-bottom: 1px solid var(--color-border-tertiary);
+  cursor: pointer; transition: background 0.2s;
+}
+.sheet-option-row:active { opacity: 0.6; }
+.sheet-option-row:last-child { border-bottom: none; }
+.sheet-row-left { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+.sheet-row-left i { font-size: 22px; color: var(--color-text-secondary); }
+.sheet-row-right { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--color-text-secondary); }
+.sheet-row-right i { font-size: 18px; }
+
+/* 速度調整頁專屬設計 */
+.sheet-speed-display { text-align: center; font-size: 32px; font-weight: 700; color: var(--color-accent); margin: 15px 0; }
+.sheet-slider-container { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; }
+.sheet-slider-container input[type=range] { flex: 1; }
+
+.section-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px; font-weight: 600; text-align: left; }
+.sheet-quick-speeds { display: flex; gap: 8px; justify-content: space-between; }
+.speed-quick-btn {
+  flex: 1; padding: 10px 0; border-radius: 12px; border: 1px solid var(--color-border-secondary);
+  background: var(--color-background-secondary); font-size: 13px; font-weight: 600; color: var(--color-text-primary);
   cursor: pointer; transition: all 0.2s; outline: none;
 }
-.speed-btn.active {
-  background: var(--color-accent); color: white;
-  border-color: var(--color-accent);
-}
+.speed-quick-btn.active { background: var(--color-accent); color: white; border-color: var(--color-accent); }
 
 
 /* ====== 模式一：全頁歌詞 ====== */

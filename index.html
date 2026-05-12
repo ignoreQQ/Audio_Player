@@ -173,7 +173,7 @@
         <div class="song-actions" id="np-song-actions">
           <i class="ti ti-heart" id="np-fav-btn" onclick="toggleCurrentFavorite()"></i>
           <span class="category-badge" id="np-category">未分類</span>
-          <i class="ti ti-dots-vertical" onclick="toggleMoreOptions(true)" title="更多設定"></i>
+          <i class="ti ti-dots-vertical" onclick="toggleMoreOptions(true)" title="播放設定"></i>
         </div>
 
         <div class="progress-area" id="np-progress-area">
@@ -219,23 +219,65 @@
 
     <div class="action-sheet-backdrop" id="more-options-sheet" onclick="toggleMoreOptions(false)">
       <div class="action-sheet-content" onclick="event.stopPropagation()">
-        <div class="action-sheet-header">
-          <span>更多播放設定</span>
-          <i class="ti ti-x" onclick="toggleMoreOptions(false)"></i>
-        </div>
-        <div class="action-sheet-section">
-          <div class="section-label">播放速度</div>
-          <div class="speed-options">
-            <button class="speed-btn" onclick="setPlaySpeed(0.25)">0.25x</button>
-            <button class="speed-btn" onclick="setPlaySpeed(0.5)">0.5x</button>
-            <button class="speed-btn" onclick="setPlaySpeed(0.75)">0.75x</button>
-            <button class="speed-btn active" onclick="setPlaySpeed(1.0)">1.0x</button>
-            <button class="speed-btn" onclick="setPlaySpeed(1.25)">1.25x</button>
-            <button class="speed-btn" onclick="setPlaySpeed(1.5)">1.5x</button>
-            <button class="speed-btn" onclick="setPlaySpeed(1.75)">1.75x</button>
-            <button class="speed-btn" onclick="setPlaySpeed(2.0)">2.0x</button>
+        
+        <div id="sheet-main-menu" class="sheet-menu-page active">
+          <div class="action-sheet-header">
+            <span>播放設定</span>
+            <i class="ti ti-x" onclick="toggleMoreOptions(false)"></i>
+          </div>
+          <div class="sheet-option-row" onclick="openSheetPage('sheet-speed-menu')">
+            <div class="sheet-row-left">
+              <i class="ti ti-gauge"></i>
+              <span>播放速度</span>
+            </div>
+            <div class="sheet-row-right">
+              <span id="sheet-current-speed">1.0x</span>
+              <i class="ti ti-chevron-right"></i>
+            </div>
+          </div>
+          <div class="sheet-option-row" onclick="document.getElementById('sheet-translation-toggle').click()">
+            <div class="sheet-row-left">
+              <i class="ti ti-captions"></i>
+              <span>中文字幕</span>
+            </div>
+            <div class="sheet-row-right" onclick="event.stopPropagation()">
+              <label class="switch">
+                <input type="checkbox" id="sheet-translation-toggle" onchange="toggleTranslationSetting(this.checked)">
+                <span class="slider round"></span>
+              </label>
+            </div>
           </div>
         </div>
+
+        <div id="sheet-speed-menu" class="sheet-menu-page">
+          <div class="action-sheet-header">
+            <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="openSheetPage('sheet-main-menu')">
+              <i class="ti ti-chevron-left"></i>
+              <span>播放速度</span>
+            </div>
+            <i class="ti ti-x" onclick="toggleMoreOptions(false)"></i>
+          </div>
+          
+          <div class="sheet-speed-display">
+            <span id="speed-slider-val">1.0x</span>
+          </div>
+          
+          <div class="sheet-slider-container">
+            <span style="font-size:12px; color:var(--color-text-tertiary)">0.25x</span>
+            <input type="range" id="sheet-speed-slider" min="0.25" max="2.0" step="0.05" value="1.0" oninput="handleSpeedSlider(this.value)">
+            <span style="font-size:12px; color:var(--color-text-tertiary)">2.0x</span>
+          </div>
+
+          <div class="section-label">常用速度</div>
+          <div class="sheet-quick-speeds">
+            <button class="speed-quick-btn" onclick="setPlaySpeed(0.5)">0.5x</button>
+            <button class="speed-quick-btn" onclick="setPlaySpeed(0.75)">0.75x</button>
+            <button class="speed-quick-btn active" onclick="setPlaySpeed(1.0)">1.0x</button>
+            <button class="speed-quick-btn" onclick="setPlaySpeed(1.5)">1.5x</button>
+            <button class="speed-quick-btn" onclick="setPlaySpeed(2.0)">2.0x</button>
+          </div>
+        </div>
+
       </div>
     </div>
 

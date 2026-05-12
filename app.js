@@ -56,26 +56,74 @@ function toggleNowPlaying(open) {
   }
 }
 
+// 🌟 面板層級切換
+function openSheetPage(pageId) {
+  document.querySelectorAll('.sheet-menu-page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(pageId);
+  if (target) target.classList.add('active');
+}
+
+// 🌟 展開或關閉設定面板，並在每次開啟時同步數值與回到第一層主選單
 function toggleMoreOptions(show) {
   const sheet = document.getElementById('more-options-sheet');
   if (!sheet) return;
   if (show) {
+    openSheetPage('sheet-main-menu'); // 預設進去先呈現 Level 1 選單
+    
+    // 同步最新的速度與字幕狀態至面板顯示
+    let savedSpeed = parseFloat(localStorage.getItem('myPlaySpeed')) || 1.0;
+    const speedStr = (Number.isInteger(savedSpeed) ? savedSpeed.toFixed(1) : savedSpeed) + 'x';
+    document.getElementById('sheet-current-speed').innerText = speedStr;
+    document.getElementById('speed-slider-val').innerText = speedStr;
+    const slider = document.getElementById('sheet-speed-slider');
+    if (slider) slider.value = savedSpeed;
+    
+    // 同步快速鍵狀態
+    document.querySelectorAll('.speed-quick-btn').forEach(btn => {
+      btn.classList.toggle('active', parseFloat(btn.innerText) === savedSpeed);
+    });
+
+    const sheetToggle = document.getElementById('sheet-translation-toggle');
+    if (sheetToggle) sheetToggle.checked = showTranslation;
+
     sheet.classList.add('active');
   } else {
     sheet.classList.remove('active');
   }
 }
 
-// 🌟 設定播放倍速，自動對齊 8段選項高亮
+// 🌟 拉桿即時連續拖曳監聽，即時調整音速但不關閉面板
+function handleSpeedSlider(val) {
+  const speed = parseFloat(val);
+  audioPlayer.playbackRate = speed;
+  localStorage.setItem('myPlaySpeed', speed);
+  
+  const speedStr = (Number.isInteger(speed) ? speed.toFixed(1) : speed.toFixed(2)) + 'x';
+  document.getElementById('sheet-current-speed').innerText = speedStr;
+  document.getElementById('speed-slider-val').innerText = speedStr;
+  
+  document.querySelectorAll('.speed-quick-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.innerText) === speed);
+  });
+}
+
+// 🌟 五大快速鍵設定，點擊後自動同步拉桿並延遲收縮面板重現手感
 function setPlaySpeed(speed) {
   audioPlayer.playbackRate = speed;
   localStorage.setItem('myPlaySpeed', speed);
   
-  document.querySelectorAll('.speed-btn').forEach(btn => {
+  const slider = document.getElementById('sheet-speed-slider');
+  if (slider) slider.value = speed;
+  
+  const speedStr = (Number.isInteger(speed) ? speed.toFixed(1) : speed) + 'x';
+  document.getElementById('sheet-current-speed').innerText = speedStr;
+  document.getElementById('speed-slider-val').innerText = speedStr;
+  
+  document.querySelectorAll('.speed-quick-btn').forEach(btn => {
     btn.classList.toggle('active', parseFloat(btn.innerText) === speed);
   });
   
-  setTimeout(() => toggleMoreOptions(false), 150);
+  setTimeout(() => toggleMoreOptions(false), 200);
 }
 
 function cycleLyricsMode() {
@@ -247,7 +295,6 @@ function playSong(index) {
 
   audioPlayer.src = song.audio; 
   
-  // 繼承儲存倍速
   let savedSpeed = parseFloat(localStorage.getItem('myPlaySpeed')) || 1.0;
   audioPlayer.playbackRate = savedSpeed;
   
@@ -392,8 +439,16 @@ function changeFontSize(s) {
   localStorage.setItem('myLyricFontSize', size);
 }
 
+// 🌟 核心升級：實現獨立面板開關與「我的設定頁」開關的雙向完美同步
 function toggleTranslationSetting(c) {
-  showTranslation = c; localStorage.setItem('myShowTranslation', c);
+  showTranslation = c; 
+  localStorage.setItem('myShowTranslation', c);
+  
+  const profileToggle = document.getElementById('translation-toggle');
+  const sheetToggle = document.getElementById('sheet-translation-toggle');
+  if (profileToggle) profileToggle.checked = c;
+  if (sheetToggle) sheetToggle.checked = c;
+
   document.querySelectorAll('.translation').forEach(el => el.classList.toggle('hidden', !c));
   const miniTrans = document.getElementById('mini-lyric-trans');
   if (miniTrans && miniTrans.innerText.trim() !== '') miniTrans.classList.toggle('hidden', !c);
@@ -407,13 +462,17 @@ function initSettings() {
   if (savedSize) { document.getElementById('font-size-slider').value = savedSize; changeFontSize(savedSize); }
   
   let savedTrans = localStorage.getItem('myShowTranslation');
-  if (savedTrans !== null) { showTranslation = savedTrans === 'true'; document.getElementById('translation-toggle').checked = showTranslation; toggleTranslationSetting(showTranslation); }
+  if (savedTrans !== null) { showTranslation = savedTrans === 'true'; toggleTranslationSetting(showTranslation); }
   
-  // 🌟 初始化讀取 8段速度並套用
   let savedSpeed = parseFloat(localStorage.getItem('myPlaySpeed')) || 1.0;
   audioPlayer.playbackRate = savedSpeed;
   setTimeout(() => {
-    document.querySelectorAll('.speed-btn').forEach(btn => {
+    const slider = document.getElementById('sheet-speed-slider');
+    if (slider) slider.value = savedSpeed;
+    const speedStr = (Number.isInteger(savedSpeed) ? savedSpeed.toFixed(1) : savedSpeed) + 'x';
+    document.getElementById('sheet-current-speed').innerText = speedStr;
+    document.getElementById('speed-slider-val').innerText = speedStr;
+    document.querySelectorAll('.speed-quick-btn').forEach(btn => {
       btn.classList.toggle('active', parseFloat(btn.innerText) === savedSpeed);
     });
   }, 100);
