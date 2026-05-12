@@ -173,7 +173,7 @@
         <div class="song-actions" id="np-song-actions">
           <i class="ti ti-heart" id="np-fav-btn" onclick="toggleCurrentFavorite()"></i>
           <span class="category-badge" id="np-category">未分類</span>
-          <i class="ti ti-arrows-minimize" onclick="toggleNowPlaying(false)" title="收起"></i>
+          <i class="ti ti-dots-vertical" onclick="toggleMoreOptions(true)" title="更多設定"></i>
         </div>
 
         <div class="progress-area" id="np-progress-area">
@@ -214,6 +214,24 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <div class="action-sheet-backdrop" id="more-options-sheet" onclick="toggleMoreOptions(false)">
+      <div class="action-sheet-content" onclick="event.stopPropagation()">
+        <div class="action-sheet-header">
+          <span>更多播放設定</span>
+          <i class="ti ti-x" onclick="toggleMoreOptions(false)"></i>
+        </div>
+        <div class="action-sheet-section">
+          <div class="section-label">播放速度</div>
+          <div class="speed-options">
+            <button class="speed-btn active" onclick="setPlaySpeed(1.0)">1.0x</button>
+            <button class="speed-btn" onclick="setPlaySpeed(0.75)">0.75x</button>
+            <button class="speed-btn" onclick="setPlaySpeed(1.25)">1.25x</button>
+            <button class="speed-btn" onclick="setPlaySpeed(1.5)">1.5x</button>
+          </div>
+        </div>
       </div>
     </div>
 

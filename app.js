@@ -25,8 +25,6 @@ let isShuffle = false;
 let currentSortMode = 'default';
 
 let currentPlayModeState = 0;
-
-// 🌟 改為空陣列動態接收外部 JSON 資料
 let allSongs = [];
 
 function switchNav(tab) {
@@ -56,6 +54,30 @@ function toggleNowPlaying(open) {
     if (miniPlayer) miniPlayer.classList.remove('hidden');
     if (bottomNav) bottomNav.classList.remove('hidden');
   }
+}
+
+// 🌟 展開或關閉更多設定面板
+function toggleMoreOptions(show) {
+  const sheet = document.getElementById('more-options-sheet');
+  if (!sheet) return;
+  if (show) {
+    sheet.classList.add('active');
+  } else {
+    sheet.classList.remove('active');
+  }
+}
+
+// 🌟 設定播放倍速，並同步更新 UI 與本機儲存
+function setPlaySpeed(speed) {
+  audioPlayer.playbackRate = speed;
+  localStorage.setItem('myPlaySpeed', speed);
+  
+  document.querySelectorAll('.speed-btn').forEach(btn => {
+    btn.classList.toggle('active', parseFloat(btn.innerText) === speed);
+  });
+  
+  // 延遲一點點收攏面板，讓點擊回饋更有手感
+  setTimeout(() => toggleMoreOptions(false), 150);
 }
 
 function cycleLyricsMode() {
@@ -225,7 +247,15 @@ function playSong(index) {
   localStorage.setItem('myRecentSongs', JSON.stringify(recentSongIds));
   if (document.getElementById('page-home').classList.contains('active')) renderHome();
 
-  audioPlayer.src = song.audio; fetchLyrics(song.lyrics); audioPlayer.play(); updatePlayPauseUI(true);
+  audioPlayer.src = song.audio; 
+  
+  // 🌟 確保換歌時繼承使用者設定的播放倍速
+  let savedSpeed = parseFloat(localStorage.getItem('myPlaySpeed')) || 1.0;
+  audioPlayer.playbackRate = savedSpeed;
+  
+  fetchLyrics(song.lyrics); 
+  audioPlayer.play(); 
+  updatePlayPauseUI(true);
   
   toggleNowPlaying(true);
 }
@@ -374,14 +404,25 @@ function toggleTranslationSetting(c) {
 function initSettings() {
   let savedVol = localStorage.getItem('mySavedVolume');
   if (savedVol !== null) { audioPlayer.volume = parseFloat(savedVol); volumeBar.value = audioPlayer.volume * 100; updateVolumeIcon(audioPlayer.volume); }
+  
   let savedSize = localStorage.getItem('myLyricFontSize');
   if (savedSize) { document.getElementById('font-size-slider').value = savedSize; changeFontSize(savedSize); }
+  
   let savedTrans = localStorage.getItem('myShowTranslation');
   if (savedTrans !== null) { showTranslation = savedTrans === 'true'; document.getElementById('translation-toggle').checked = showTranslation; toggleTranslationSetting(showTranslation); }
+  
+  // 🌟 讀取自訂的播放速度設定並更新按鈕狀態
+  let savedSpeed = parseFloat(localStorage.getItem('myPlaySpeed')) || 1.0;
+  audioPlayer.playbackRate = savedSpeed;
+  setTimeout(() => {
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+      btn.classList.toggle('active', parseFloat(btn.innerText) === savedSpeed);
+    });
+  }, 100);
+
   renderHome();
 }
 
-// 🌟 新增非同步初始化流程，確保讀取完成後再渲染介面
 async function loadSongsAndInit() {
   try {
     const response = await fetch('songs.json');
@@ -391,10 +432,9 @@ async function loadSongsAndInit() {
   } catch (error) {
     console.error('載入歌單失敗:', error);
     if (lyricsContainer) {
-      lyricsContainer.innerHTML = '<div style="text-align:center; color:var(--color-text-secondary); font-size:14px;">載入歌單失敗，請確認 songs.json 檔案是否存在且格式正確。</div>';
+      lyricsContainer.innerHTML = '<div style="text-align:center; color:var(--color-text-secondary); font-size:14px;">載入歌單失敗，請確認 songs.json 檔案是否存在。</div>';
     }
   }
 }
 
-// 觸發載入
 loadSongsAndInit();
