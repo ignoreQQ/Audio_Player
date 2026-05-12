@@ -56,7 +56,6 @@ function toggleNowPlaying(open) {
   }
 }
 
-// 🌟 展開或關閉更多設定面板
 function toggleMoreOptions(show) {
   const sheet = document.getElementById('more-options-sheet');
   if (!sheet) return;
@@ -67,7 +66,7 @@ function toggleMoreOptions(show) {
   }
 }
 
-// 🌟 設定播放倍速，並同步更新 UI 與本機儲存
+// 🌟 設定播放倍速，自動對齊 8段選項高亮
 function setPlaySpeed(speed) {
   audioPlayer.playbackRate = speed;
   localStorage.setItem('myPlaySpeed', speed);
@@ -76,7 +75,6 @@ function setPlaySpeed(speed) {
     btn.classList.toggle('active', parseFloat(btn.innerText) === speed);
   });
   
-  // 延遲一點點收攏面板，讓點擊回饋更有手感
   setTimeout(() => toggleMoreOptions(false), 150);
 }
 
@@ -249,7 +247,7 @@ function playSong(index) {
 
   audioPlayer.src = song.audio; 
   
-  // 🌟 確保換歌時繼承使用者設定的播放倍速
+  // 繼承儲存倍速
   let savedSpeed = parseFloat(localStorage.getItem('myPlaySpeed')) || 1.0;
   audioPlayer.playbackRate = savedSpeed;
   
@@ -411,7 +409,7 @@ function initSettings() {
   let savedTrans = localStorage.getItem('myShowTranslation');
   if (savedTrans !== null) { showTranslation = savedTrans === 'true'; document.getElementById('translation-toggle').checked = showTranslation; toggleTranslationSetting(showTranslation); }
   
-  // 🌟 讀取自訂的播放速度設定並更新按鈕狀態
+  // 🌟 初始化讀取 8段速度並套用
   let savedSpeed = parseFloat(localStorage.getItem('myPlaySpeed')) || 1.0;
   audioPlayer.playbackRate = savedSpeed;
   setTimeout(() => {
