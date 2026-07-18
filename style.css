@@ -1727,9 +1727,9 @@ rt {
   }
 }
 
-/* ===== 修正 YouTube 影片播放後頂部被歌詞自動捲動吃掉 ===== */
+/* ===== 控制鍵與字幕跟隨修正 ===== */
 .now-playing-content {
-  scroll-padding-top: calc(62px + env(safe-area-inset-top));
+  scroll-padding-top: calc(64px + env(safe-area-inset-top));
   overscroll-behavior-y: contain;
 }
 
@@ -1739,16 +1739,49 @@ rt {
   z-index: 30;
   flex-shrink: 0;
   padding: 4px 0 8px;
-  background: rgba(248, 246, 252, 0.88);
+  background: rgba(248, 246, 252, 0.9);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+}
+
+.controls {
+  flex-shrink: 0;
+  min-height: 72px;
+  padding: 0 2px;
+}
+
+.control-button,
+.main-play-button {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.control-button i,
+.main-play-button i,
+.mini-controls i {
+  display: inline-block;
+  font-family: "tabler-icons" !important;
+  font-style: normal;
+  line-height: 1;
+}
+
+.main-play-button i {
+  color: #fff !important;
+  font-size: 32px;
 }
 
 .lyrics-wrapper {
   min-height: 220px;
   max-height: min(48vh, 430px);
+  overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   overflow-anchor: none;
+  scroll-behavior: smooth;
+}
+
+.lyric-line {
+  scroll-margin-block: 40%;
 }
 
 .lyrics-wrapper.focus {
@@ -1761,11 +1794,6 @@ rt {
 }
 
 @media (max-height: 760px) {
-  .youtube-player-wrapper {
-    max-height: 34vh;
-  }
-  .lyrics-wrapper {
-    min-height: 180px;
-    max-height: 38vh;
-  }
+  .youtube-player-wrapper { max-height: 34vh; }
+  .lyrics-wrapper { min-height: 180px; max-height: 38vh; }
 }

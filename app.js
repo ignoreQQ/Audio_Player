@@ -1143,18 +1143,6 @@ document
    影片／歌詞模式
 ========================================================= */
 
-function scrollActiveLyricIntoPanel(behavior = 'smooth') {
-  const panel = document.getElementById('lyrics-panel');
-  const activeLine = document.getElementById(`lyric-${currentLyricIndex}`);
-  if (!panel || !activeLine) return;
-
-  const targetTop = activeLine.offsetTop - (panel.clientHeight / 2) + (activeLine.offsetHeight / 2);
-  panel.scrollTo({
-    top: Math.max(0, targetTop),
-    behavior
-  });
-}
-
 function applyDisplayMode() {
   document
     .getElementById('video-panel')
@@ -1180,7 +1168,7 @@ document
     applyDisplayMode();
 
     if (!isVideoMode && currentLyricIndex >= 0) {
-      scrollActiveLyricIntoPanel('smooth');
+      scrollLyricPanelToLine(document.getElementById(`lyric-${currentLyricIndex}`), 'smooth');
     }
   });
 
@@ -1231,8 +1219,8 @@ function pauseMedia() {
 function updatePlayButtons(playing) {
   document.getElementById('main-play-icon').className =
     playing
-      ? 'ti ti-player-pause-filled'
-      : 'ti ti-player-play-filled';
+      ? 'ti ti-player-pause'
+      : 'ti ti-player-play';
 
   document.getElementById('mini-play-icon').className =
     playing
@@ -1732,6 +1720,22 @@ function getOriginalText(line) {
   return String(line.text || '');
 }
 
+function scrollLyricPanelToLine(lineElement, behavior = 'smooth') {
+  const panel = document.getElementById('lyrics-panel');
+  if (!panel || !lineElement) return;
+
+  // Use element rectangles so nested offset parents do not corrupt the target.
+  const panelRect = panel.getBoundingClientRect();
+  const lineRect = lineElement.getBoundingClientRect();
+  const currentRelativeTop = lineRect.top - panelRect.top + panel.scrollTop;
+  const targetTop = currentRelativeTop - (panel.clientHeight - lineElement.offsetHeight) / 2;
+
+  panel.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior
+  });
+}
+
 function updateActiveLyric() {
   if (lyricsData.length === 0) {
     return;
@@ -1760,7 +1764,7 @@ function updateActiveLyric() {
 
   activeLine?.classList.add('active');
 
-  scrollActiveLyricIntoPanel('smooth');
+  scrollLyricPanelToLine(activeLine, 'smooth');
 
   updateMiniLyrics(lyricsData[index]);
 }
