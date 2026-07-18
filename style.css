@@ -1727,33 +1727,45 @@ rt {
   }
 }
 
-/* ===== 追加優化 ===== */
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 3px solid var(--accent-soft);
-  outline-offset: 2px;
+/* ===== 修正 YouTube 影片播放後頂部被歌詞自動捲動吃掉 ===== */
+.now-playing-content {
+  scroll-padding-top: calc(62px + env(safe-area-inset-top));
+  overscroll-behavior-y: contain;
 }
 
-input[type="range"]::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
-  background: var(--text);
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
+.np-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  flex-shrink: 0;
+  padding: 4px 0 8px;
+  background: rgba(248, 246, 252, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
-@media (hover: none) {
-  .track-overlay { opacity: 0; }
-  .album-play-icon { opacity: 0.96; }
+.lyrics-wrapper {
+  min-height: 220px;
+  max-height: min(48vh, 430px);
+  overscroll-behavior: contain;
+  overflow-anchor: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+.lyrics-wrapper.focus {
+  min-height: 52vh;
+  max-height: 62vh;
+}
+
+.youtube-player-wrapper {
+  min-height: 200px;
+}
+
+@media (max-height: 760px) {
+  .youtube-player-wrapper {
+    max-height: 34vh;
+  }
+  .lyrics-wrapper {
+    min-height: 180px;
+    max-height: 38vh;
   }
 }

@@ -37,17 +37,11 @@ let currentArtistFilter = 'all';
 let currentLanguageFilter = 'all';
 let currentSortMode = 'default';
 
-function readStoredArray(key) {
-  try {
-    const value = JSON.parse(localStorage.getItem(key) || '[]');
-    return Array.isArray(value) ? value : [];
-  } catch {
-    return [];
-  }
-}
+let favorites =
+  JSON.parse(localStorage.getItem('myFavSongs') || '[]');
 
-let favorites = readStoredArray('myFavSongs');
-let recentSongs = readStoredArray('myRecentSongs');
+let recentSongs =
+  JSON.parse(localStorage.getItem('myRecentSongs') || '[]');
 
 let lyricsData = [];
 let currentLyricIndex = -1;
@@ -373,12 +367,7 @@ function renderRecommendations() {
       <div class="album-thumb">
         ${
           cover
-            ? `<img
-                src="${escapeHTML(cover)}"
-                alt="${escapeHTML(song.title)}"
-                loading="lazy"
-                decoding="async"
-              >`
+            ? `<img src="${escapeHTML(cover)}" alt="${escapeHTML(song.title)}" loading="lazy" decoding="async">`
             : `<div class="cover-placeholder">
                 <i class="ti ti-music"></i>
               </div>`
@@ -807,12 +796,7 @@ function createSongRow(song, sourcePlaylist) {
       <div class="track-thumb">
         ${
           cover
-            ? `<img
-                src="${escapeHTML(cover)}"
-                alt=""
-                loading="lazy"
-                decoding="async"
-              >`
+            ? `<img src="${escapeHTML(cover)}" alt="" loading="lazy" decoding="async">`
             : `<i class="ti ti-music"></i>`
         }
 
@@ -984,7 +968,6 @@ function startYouTubeSong(song) {
     Math.round(currentVolume * 100)
   );
 
-  updatePlayButtons(true);
   startPlaybackUpdater();
 }
 
@@ -1160,6 +1143,18 @@ document
    影片／歌詞模式
 ========================================================= */
 
+function scrollActiveLyricIntoPanel(behavior = 'smooth') {
+  const panel = document.getElementById('lyrics-panel');
+  const activeLine = document.getElementById(`lyric-${currentLyricIndex}`);
+  if (!panel || !activeLine) return;
+
+  const targetTop = activeLine.offsetTop - (panel.clientHeight / 2) + (activeLine.offsetHeight / 2);
+  panel.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior
+  });
+}
+
 function applyDisplayMode() {
   document
     .getElementById('video-panel')
@@ -1169,17 +1164,13 @@ function applyDisplayMode() {
     .getElementById('lyrics-panel')
     .classList.toggle('focus', !isVideoMode);
 
-  document
-    .getElementById('display-mode-button')
-    .setAttribute('aria-pressed', String(!isVideoMode));
-
   document.getElementById('display-mode-icon').className =
     isVideoMode
-      ? 'ti ti-brand-youtube'
-      : 'ti ti-file-text';
+      ? 'ti ti-file-text'
+      : 'ti ti-brand-youtube';
 
   document.getElementById('display-mode-text').textContent =
-    isVideoMode ? '影片' : '歌詞';
+    isVideoMode ? '歌詞' : '影片';
 }
 
 document
@@ -1189,12 +1180,7 @@ document
     applyDisplayMode();
 
     if (!isVideoMode && currentLyricIndex >= 0) {
-      document
-        .getElementById(`lyric-${currentLyricIndex}`)
-        ?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
+      scrollActiveLyricIntoPanel('smooth');
     }
   });
 
@@ -1774,10 +1760,7 @@ function updateActiveLyric() {
 
   activeLine?.classList.add('active');
 
-  activeLine?.scrollIntoView({
-    behavior: 'smooth',
-    block: 'center'
-  });
+  scrollActiveLyricIntoPanel('smooth');
 
   updateMiniLyrics(lyricsData[index]);
 }
@@ -1994,13 +1977,6 @@ function registerServiceWorker() {
       });
   });
 }
-
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden && activePlayerType === 'audio') {
-    // HTML Audio can continue in the background; keep state synchronized.
-    updatePlayButtons(!audioPlayer.paused);
-  }
-});
 
 updateGreeting();
 initSettings();
