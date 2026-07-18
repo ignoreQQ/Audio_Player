@@ -2,287 +2,688 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>歌曲播放器</title>
-  
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-512.jpg">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0,
+    maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  >
+
+  <title>Hibiki Music</title>
+
+  <meta name="theme-color" content="#534AB7">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  >
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-512.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="style.css">
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./Service_Worker.js');
-      });
-    }
-  </script>
 </head>
+
 <body>
+
+  <!--
+    暫時保留原本 Audio。
+    若某首歌沒有 youtubeId，但還有 audio，
+    程式會自動退回原本 MP3 播放。
+  -->
   <audio id="audio-player" preload="metadata"></audio>
 
   <div class="app-container">
-    <div class="screen">
 
-      <div class="page active" id="page-home">
+    <main class="screen">
+
+      <!-- ==================== 首頁 ==================== -->
+      <section class="page active" id="page-home">
         <div class="page-content">
-          <div class="greeting">早安 👋</div>
-          <div class="sub-greeting">今天想聽什麼？</div>
+
+          <header class="home-header">
+            <div>
+              <div class="greeting" id="greeting-text">
+                早安 👋
+              </div>
+
+              <div class="sub-greeting">
+                今天想聽什麼？
+              </div>
+            </div>
+
+            <div class="header-logo">
+              <i class="ti ti-headphones"></i>
+            </div>
+          </header>
+
+          <div class="hero-card">
+            <div class="hero-content">
+              <small>HIBIKI MUSIC</small>
+
+              <h1>讓喜歡的音樂<br>陪伴每個時刻</h1>
+
+              <p>
+                使用 YouTube 官方播放器，無須再上傳 MP3。
+              </p>
+
+              <button
+                type="button"
+                onclick="switchNav('library')"
+              >
+                <i class="ti ti-player-play-filled"></i>
+                開始聆聽
+              </button>
+            </div>
+
+            <div class="hero-decoration">
+              <i class="ti ti-music"></i>
+            </div>
+          </div>
 
           <div class="section-header">
             <span class="section-title">推薦給你</span>
-            <span class="see-all" onclick="switchNav('library')">查看曲庫</span>
+
+            <button
+              type="button"
+              class="text-button"
+              onclick="switchNav('library')"
+            >
+              查看曲庫
+            </button>
           </div>
+
           <div class="album-row" id="recommend-row"></div>
 
           <div class="section-header">
             <span class="section-title">最近播放</span>
-            <span class="see-all" onclick="clearRecent()">清除紀錄</span>
-          </div>
-          <div class="recent-list" id="recent-list"></div>
-        </div>
-      </div>
 
-      <div class="page" id="page-search">
-        <div class="page-content">
-          <div class="section-header" style="margin-bottom: 15px;">
-            <span class="section-title">搜尋歌曲</span>
+            <button
+              type="button"
+              class="text-button"
+              onclick="clearRecent()"
+            >
+              清除紀錄
+            </button>
           </div>
+
+          <div class="recent-list" id="recent-list"></div>
+
+        </div>
+      </section>
+
+      <!-- ==================== 搜尋 ==================== -->
+      <section class="page" id="page-search">
+        <div class="page-content">
+
+          <div class="page-heading">
+            <h2>搜尋</h2>
+            <p>尋找歌曲、歌手或語言</p>
+          </div>
+
           <div class="search-box">
             <i class="ti ti-search"></i>
-            <input type="text" id="search-input" placeholder="搜尋歌名或歌手..." onkeyup="filterSearch()">
+
+            <input
+              type="search"
+              id="search-input"
+              placeholder="搜尋歌名、歌手或語言..."
+              autocomplete="off"
+            >
+
+            <button
+              type="button"
+              id="clear-search-button"
+              class="clear-input-button"
+              aria-label="清除搜尋"
+              hidden
+            >
+              <i class="ti ti-x"></i>
+            </button>
           </div>
-          
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-            <select id="sort-select" class="sort-dropdown" onchange="changeSortMode(this.value)">
+
+          <div class="search-toolbar">
+            <span id="search-count">全部歌曲</span>
+
+            <select id="search-sort" class="sort-dropdown">
               <option value="default">預設排序</option>
-              <option value="title">依歌名排序 (A-Z)</option>
-              <option value="artist">依歌手排序 (A-Z)</option>
+              <option value="title">歌名 A–Z</option>
+              <option value="artist">歌手 A–Z</option>
             </select>
           </div>
 
-          <ul class="custom-song-list" id="search-result-list"></ul>
-        </div>
-      </div>
+          <ul
+            class="custom-song-list"
+            id="search-result-list"
+          ></ul>
 
-      <div class="page" id="page-library">
+        </div>
+      </section>
+
+      <!-- ==================== 曲庫 ==================== -->
+      <section class="page" id="page-library">
         <div class="page-content">
-          <div class="section-header" style="margin-bottom: 15px;">
-            <span class="section-title" id="library-title">音樂庫</span>
+
+          <div class="library-heading">
+            <div>
+              <h2 id="library-title">音樂庫</h2>
+              <p id="library-count">0 首歌曲</p>
+            </div>
+
+            <button
+              type="button"
+              class="play-all-button"
+              id="play-all-button"
+              aria-label="播放目前清單"
+            >
+              <i class="ti ti-player-play-filled"></i>
+            </button>
           </div>
 
-          <div class="category-tabs" id="category-tabs">
-            <button class="cat-btn active" data-cat="all" onclick="changeCategory('all')">全部</button>
-            <button class="cat-btn" data-cat="favorites" onclick="changeCategory('favorites')">🤍 收藏</button>
-            <button class="cat-btn" data-cat="日文" onclick="changeCategory('日文')">🇯🇵 日文</button>
-            <button class="cat-btn" data-cat="華語" onclick="changeCategory('華語')">🇹🇼 華語</button>
-            <button class="cat-btn" data-cat="其他" onclick="changeCategory('其他')">🎸 其他</button>
+          <div class="filter-block">
+            <div class="filter-title">內容</div>
+
+            <div class="category-tabs" id="content-tabs">
+              <button
+                type="button"
+                class="cat-btn active"
+                data-content="all"
+              >
+                全部
+              </button>
+
+              <button
+                type="button"
+                class="cat-btn"
+                data-content="favorites"
+              >
+                <i class="ti ti-heart"></i>
+                收藏
+              </button>
+            </div>
           </div>
 
-          <ul class="custom-song-list" id="library-song-list"></ul>
-        </div>
-      </div>
+          <div class="filter-block">
+            <div class="filter-title">歌手</div>
 
-      <div class="page" id="page-profile">
+            <div
+              class="category-tabs"
+              id="artist-tabs"
+            ></div>
+          </div>
+
+          <div class="filter-block">
+            <div class="filter-title">語言</div>
+
+            <div
+              class="category-tabs"
+              id="language-tabs"
+            ></div>
+          </div>
+
+          <div class="library-toolbar">
+            <button
+              type="button"
+              class="reset-filter-button"
+              id="reset-filter-button"
+            >
+              <i class="ti ti-filter-off"></i>
+              清除篩選
+            </button>
+
+            <select id="library-sort" class="sort-dropdown">
+              <option value="default">預設排序</option>
+              <option value="title">歌名 A–Z</option>
+              <option value="artist">歌手 A–Z</option>
+            </select>
+          </div>
+
+          <ul
+            class="custom-song-list"
+            id="library-song-list"
+          ></ul>
+
+        </div>
+      </section>
+
+      <!-- ==================== 設定 ==================== -->
+      <section class="page" id="page-profile">
         <div class="page-content">
-          <div class="section-header" style="margin-bottom: 20px;">
-            <span class="section-title">系統設定</span>
+
+          <div class="page-heading">
+            <h2>設定</h2>
+            <p>自訂播放器與字幕顯示</p>
           </div>
 
           <div class="settings-card">
-            <h3>歌詞字體大小</h3>
-            <div style="display: flex; align-items: center; gap: 15px; margin: 15px 0;">
-              <span style="font-size: 14px; color:var(--color-text-secondary);">小</span>
-              <input type="range" id="font-size-slider" min="16" max="40" value="24" style="flex-grow: 1;" oninput="changeFontSize(this.value)">
-              <span style="font-size: 20px; color:var(--color-text-secondary);">大</span>
+
+            <div class="setting-row setting-column">
+              <div class="setting-main">
+                <div class="setting-icon">
+                  <i class="ti ti-text-size"></i>
+                </div>
+
+                <div>
+                  <h3>歌詞字體大小</h3>
+                  <p>調整正在播放頁的歌詞大小</p>
+                </div>
+              </div>
+
+              <div class="range-setting">
+                <span>小</span>
+
+                <input
+                  type="range"
+                  id="font-size-slider"
+                  min="16"
+                  max="40"
+                  value="24"
+                >
+
+                <span>大</span>
+              </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; border-top: 1px solid var(--color-border-tertiary); padding-top: 20px;">
-              <h3 style="margin: 0;">顯示中文翻譯</h3>
+            <div class="setting-row">
+              <div class="setting-main">
+                <div class="setting-icon">
+                  <i class="ti ti-language"></i>
+                </div>
+
+                <div>
+                  <h3>顯示中文翻譯</h3>
+                  <p>顯示歌詞中的 translation</p>
+                </div>
+              </div>
+
               <label class="switch">
-                <input type="checkbox" id="translation-toggle" onchange="toggleTranslationSetting(this.checked)" checked>
-                <span class="slider round"></span>
+                <input
+                  type="checkbox"
+                  id="translation-toggle"
+                  checked
+                >
+
+                <span class="slider"></span>
               </label>
             </div>
 
-            <div class="lyric-line active preview-lyric" style="margin-top: 20px; padding: 15px; background: var(--color-background-primary); border-radius: 12px; border: 1px solid var(--color-border-tertiary);">
-              <div><ruby>漢字<rt>かんじ</rt></ruby>預覽</div>
-              <div class="translation" style="display: block;">這是中文翻譯預覽</div>
+            <div class="setting-row">
+              <div class="setting-main">
+                <div class="setting-icon youtube-icon">
+                  <i class="ti ti-brand-youtube"></i>
+                </div>
+
+                <div>
+                  <h3>開啟播放器時顯示影片</h3>
+                  <p>關閉時優先顯示同步歌詞</p>
+                </div>
+              </div>
+
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="default-video-toggle"
+                  checked
+                >
+
+                <span class="slider"></span>
+              </label>
+            </div>
+
+          </div>
+
+          <div class="preview-card">
+            <span>歌詞預覽</span>
+
+            <div class="preview-line">
+              <ruby>
+                漢字
+                <rt>かんじ</rt>
+              </ruby>
+              のプレビュー
+
+              <small class="translation">
+                這是中文翻譯預覽
+              </small>
             </div>
           </div>
+
+          <div class="youtube-notice">
+            <i class="ti ti-brand-youtube"></i>
+
+            <div>
+              <h3>YouTube 播放</h3>
+
+              <p>
+                網站使用 YouTube 官方嵌入播放器，
+                不會從 YouTube 抽取或下載 MP3。
+              </p>
+
+              <p>
+                PWA 介面可以快取，但播放 YouTube 影片時仍需要網路。
+              </p>
+            </div>
+          </div>
+
         </div>
+      </section>
+
+    </main>
+
+    <!-- ==================== 迷你歌詞 ==================== -->
+    <div class="mini-lyrics-bar" id="mini-lyrics-bar">
+      <div class="mini-lyric-line" id="mini-lyric-text">
+        選擇一首歌曲開始播放
       </div>
+
+      <div
+        class="mini-lyric-trans hidden"
+        id="mini-lyric-trans"
+      ></div>
     </div>
 
-    <div class="mini-lyrics-bar" id="mini-lyrics-bar" onclick="toggleNowPlaying(true)">
-      <div class="mini-lyric-line" id="mini-lyric-text"><ruby>音楽<rt>おんがく</rt></ruby>を開始しましょう</div>
-      <div class="mini-lyric-trans" id="mini-lyric-trans">點擊歌曲開始播放</div>
-    </div>
+    <!-- ==================== 迷你播放器 ==================== -->
+    <div class="mini-player" id="mini-player">
+      <div class="mini-art">
+        <img id="mini-cover" alt="" hidden>
 
-    <div class="mini-player" id="mini-player" onclick="toggleNowPlaying(true)">
-      <div class="mini-art"><i class="ti ti-music"></i></div>
+        <i
+          class="ti ti-music"
+          id="mini-cover-placeholder"
+        ></i>
+      </div>
+
       <div class="mini-info">
-        <div class="mini-song" id="mini-title">尚未播放</div>
-        <div class="mini-artist" id="mini-artist">--</div>
+        <div class="mini-song" id="mini-title">
+          尚未播放
+        </div>
+
+        <div class="mini-artist" id="mini-artist">
+          --
+        </div>
       </div>
-      <div class="mini-controls" onclick="event.stopPropagation()">
-        <i class="ti ti-player-play" id="mini-play-btn" onclick="togglePlay()"></i>
-        <i class="ti ti-player-skip-forward" onclick="playNext()"></i>
+
+      <div class="mini-controls">
+        <button
+          type="button"
+          id="mini-play-button"
+          aria-label="播放或暫停"
+        >
+          <i
+            class="ti ti-player-play"
+            id="mini-play-icon"
+          ></i>
+        </button>
+
+        <button
+          type="button"
+          id="mini-next-button"
+          aria-label="下一首"
+        >
+          <i class="ti ti-player-skip-forward"></i>
+        </button>
       </div>
     </div>
 
-    <div class="bottom-nav">
-      <div class="nav-item active" id="nav-home" onclick="switchNav('home')">
-        <i class="ti ti-home"></i><span>首頁</span>
-      </div>
-      <div class="nav-item" id="nav-search" onclick="switchNav('search')">
-        <i class="ti ti-search"></i><span>搜尋</span>
-      </div>
-      <div class="nav-item" id="nav-library" onclick="switchNav('library')">
-        <i class="ti ti-library"></i><span>曲庫</span>
-      </div>
-      <div class="nav-item" id="nav-profile" onclick="switchNav('profile')">
-        <i class="ti ti-user"></i><span>我的</span>
-      </div>
-    </div>
+    <!-- ==================== 底部選單 ==================== -->
+    <nav class="bottom-nav">
 
-    <div class="now-playing-page" id="page-now-playing">
+      <button
+        type="button"
+        class="nav-item active"
+        data-page="home"
+      >
+        <i class="ti ti-home"></i>
+        <span>首頁</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        data-page="search"
+      >
+        <i class="ti ti-search"></i>
+        <span>搜尋</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        data-page="library"
+      >
+        <i class="ti ti-library"></i>
+        <span>曲庫</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        data-page="profile"
+      >
+        <i class="ti ti-settings"></i>
+        <span>設定</span>
+      </button>
+
+    </nav>
+
+    <!-- ==================== 正在播放 ==================== -->
+    <section
+      class="now-playing-page"
+      id="page-now-playing"
+      aria-hidden="true"
+    >
+      <div class="now-playing-background">
+        <img id="np-background" alt="">
+      </div>
+
       <div class="now-playing-content">
-        
-        <div class="np-header">
-          <i class="ti ti-chevron-down" onclick="toggleNowPlaying(false)" title="收起介面"></i>
-          <span class="np-title">正在播放</span>
-          <button class="mode-badge-btn" onclick="cycleLyricsMode()" title="切換顯示模式">
-            <i class="ti ti-photo" id="mode-btn-icon"></i>
-            <span id="mode-btn-text">封面</span>
+
+        <header class="np-header">
+          <button
+            type="button"
+            id="close-now-playing"
+            aria-label="收起播放器"
+          >
+            <i class="ti ti-chevron-down"></i>
           </button>
+
+          <span>正在播放</span>
+
+          <button
+            type="button"
+            class="mode-button"
+            id="display-mode-button"
+          >
+            <i
+              class="ti ti-file-text"
+              id="display-mode-icon"
+            ></i>
+
+            <span id="display-mode-text">歌詞</span>
+          </button>
+        </header>
+
+        <!--
+          YouTube 播放器保持正式可見區域。
+          不使用 1x1、畫面外或透明播放器。
+        -->
+        <div class="youtube-player-wrapper" id="video-panel">
+          <div id="youtube-player"></div>
         </div>
 
-        <div class="album-art" id="np-album-art">
-          <div class="album-art-inner"><i class="ti ti-music"></i></div>
+        <div class="song-info">
+          <div class="song-title-row">
+            <div>
+              <h1 id="np-title">尚未播放</h1>
+              <p id="np-artist">--</p>
+            </div>
+
+            <button
+              type="button"
+              class="favorite-button"
+              id="np-favorite-button"
+              aria-label="收藏"
+            >
+              <i class="ti ti-heart"></i>
+            </button>
+          </div>
+
+          <div class="song-badges">
+            <span id="np-category">未分類</span>
+
+            <span class="youtube-badge">
+              <i class="ti ti-brand-youtube"></i>
+              YouTube
+            </span>
+          </div>
         </div>
 
-        <div class="song-info" id="np-song-info">
-          <div class="song-name" id="np-title">--</div>
-          <div class="artist-name" id="np-artist">--</div>
-        </div>
+        <div class="progress-area">
+          <input
+            type="range"
+            id="progress-bar"
+            min="0"
+            max="1000"
+            value="0"
+          >
 
-        <div class="song-actions" id="np-song-actions">
-          <i class="ti ti-heart" id="np-fav-btn" onclick="toggleCurrentFavorite()"></i>
-          <span class="category-badge" id="np-category">未分類</span>
-          <i class="ti ti-dots-vertical" onclick="toggleMoreOptions(true)" title="播放設定"></i>
-        </div>
-
-        <div class="progress-area" id="np-progress-area">
-          <input type="range" id="progress-bar" value="0" max="100">
           <div class="time-labels">
             <span id="time-current">0:00</span>
             <span id="time-total">0:00</span>
           </div>
         </div>
 
-        <div class="controls" id="np-controls">
-          <button class="ctrl-btn" id="shuffle-btn" onclick="toggleShuffle()"><i class="ti ti-arrows-shuffle"></i></button>
-          <button class="ctrl-btn" onclick="playPrevious()"><i class="ti ti-player-skip-back"></i></button>
-          <button class="play-btn" id="play-pause-btn" onclick="togglePlay()"><i class="ti ti-player-play"></i></button>
-          <button class="ctrl-btn" onclick="playNext()"><i class="ti ti-player-skip-forward"></i></button>
-          <button class="ctrl-btn" id="repeat-btn" onclick="toggleRepeat()"><i class="ti ti-repeat"></i></button>
+        <div class="controls">
+          <button
+            type="button"
+            class="control-button"
+            id="shuffle-button"
+            aria-label="隨機播放"
+          >
+            <i class="ti ti-arrows-shuffle"></i>
+          </button>
+
+          <button
+            type="button"
+            class="control-button"
+            id="previous-button"
+            aria-label="上一首"
+          >
+            <i class="ti ti-player-skip-back-filled"></i>
+          </button>
+
+          <button
+            type="button"
+            class="main-play-button"
+            id="main-play-button"
+            aria-label="播放或暫停"
+          >
+            <i
+              class="ti ti-player-play-filled"
+              id="main-play-icon"
+            ></i>
+          </button>
+
+          <button
+            type="button"
+            class="control-button"
+            id="next-button"
+            aria-label="下一首"
+          >
+            <i class="ti ti-player-skip-forward-filled"></i>
+          </button>
+
+          <button
+            type="button"
+            class="control-button"
+            id="repeat-button"
+            aria-label="單曲循環"
+          >
+            <i class="ti ti-repeat"></i>
+          </button>
         </div>
 
-        <div class="volume-row" id="np-volume-row">
-          <i class="ti ti-volume" id="volume-icon" onclick="toggleMute()"></i>
-          <input type="range" id="volume-bar" class="volume-bar" value="100" max="100">
+        <div class="secondary-controls">
+          <button
+            type="button"
+            id="volume-button"
+            aria-label="靜音"
+          >
+            <i class="ti ti-volume" id="volume-icon"></i>
+          </button>
+
+          <input
+            type="range"
+            id="volume-bar"
+            min="0"
+            max="100"
+            value="100"
+          >
+
+          <button
+            type="button"
+            id="speed-button"
+            class="speed-button"
+          >
+            1.0x
+          </button>
         </div>
 
-        <div class="lyrics-wrapper" id="np-lyrics-wrapper">
-          <div id="lyrics-container"></div>
-          <div class="ktv-hint" id="ktv-pause-hint">點擊畫面任意處可 暫停 / 播放</div>
-        </div>
-
-        <div class="full-lyrics-mini-bar" id="fl-mini-bar">
-          <div class="fl-mini-art"><i class="ti ti-music"></i></div>
-          <div class="fl-mini-info">
-            <div class="fl-mini-song" id="fl-title">尚未播放</div>
-            <div class="fl-mini-artist" id="fl-artist">--</div>
-          </div>
-          <div class="fl-mini-controls">
-            <i class="ti ti-player-play" id="fl-play-btn" onclick="togglePlay()"></i>
-            <i class="ti ti-player-skip-forward" onclick="playNext()"></i>
+        <div class="lyrics-wrapper" id="lyrics-panel">
+          <div id="lyrics-container">
+            <div class="lyrics-message">
+              請先選擇歌曲
+            </div>
           </div>
         </div>
 
       </div>
-    </div>
+    </section>
 
-    <div class="action-sheet-backdrop" id="more-options-sheet" onclick="toggleMoreOptions(false)">
-      <div class="action-sheet-content" onclick="event.stopPropagation()">
-        
-        <div id="sheet-main-menu" class="sheet-menu-page active">
-          <div class="action-sheet-header">
-            <span>播放設定</span>
-            <i class="ti ti-x" onclick="toggleMoreOptions(false)"></i>
-          </div>
-          <div class="sheet-option-row" onclick="openSheetPage('sheet-speed-menu')">
-            <div class="sheet-row-left">
-              <i class="ti ti-gauge"></i>
-              <span>播放速度</span>
-            </div>
-            <div class="sheet-row-right">
-              <span id="sheet-current-speed">1.0x</span>
-              <i class="ti ti-chevron-right"></i>
-            </div>
-          </div>
-          <div class="sheet-option-row" onclick="document.getElementById('sheet-translation-toggle').click()">
-            <div class="sheet-row-left">
-              <i class="ti ti-captions"></i>
-              <span>中文字幕</span>
-            </div>
-            <div class="sheet-row-right" onclick="event.stopPropagation()">
-              <label class="switch">
-                <input type="checkbox" id="sheet-translation-toggle" onchange="toggleTranslationSetting(this.checked)">
-                <span class="slider round"></span>
-              </label>
-            </div>
-          </div>
+    <!-- ==================== 播放速度面板 ==================== -->
+    <div class="sheet-backdrop" id="speed-sheet">
+      <div class="sheet-content">
+        <div class="sheet-header">
+          <h3>播放速度</h3>
+
+          <button
+            type="button"
+            id="close-speed-sheet"
+            aria-label="關閉"
+          >
+            <i class="ti ti-x"></i>
+          </button>
         </div>
 
-        <div id="sheet-speed-menu" class="sheet-menu-page">
-          <div class="action-sheet-header">
-            <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="openSheetPage('sheet-main-menu')">
-              <i class="ti ti-chevron-left"></i>
-              <span>播放速度</span>
-            </div>
-            <i class="ti ti-x" onclick="toggleMoreOptions(false)"></i>
-          </div>
-          
-          <div class="sheet-speed-display">
-            <span id="speed-slider-val">1.0x</span>
-          </div>
-          
-          <div class="sheet-slider-container">
-            <span style="font-size:12px; color:var(--color-text-tertiary)">0.25x</span>
-            <input type="range" id="sheet-speed-slider" min="0.25" max="2.0" step="0.05" value="1.0" oninput="handleSpeedSlider(this.value)">
-            <span style="font-size:12px; color:var(--color-text-tertiary)">2.0x</span>
-          </div>
-
-          <div class="section-label">常用速度</div>
-          <div class="sheet-quick-speeds">
-            <button class="speed-quick-btn" onclick="setPlaySpeed(0.5)">0.5x</button>
-            <button class="speed-quick-btn" onclick="setPlaySpeed(0.75)">0.75x</button>
-            <button class="speed-quick-btn active" onclick="setPlaySpeed(1.0)">1.0x</button>
-            <button class="speed-quick-btn" onclick="setPlaySpeed(1.5)">1.5x</button>
-            <button class="speed-quick-btn" onclick="setPlaySpeed(2.0)">2.0x</button>
-          </div>
+        <div class="speed-display" id="speed-display">
+          1.0x
         </div>
 
+        <input
+          type="range"
+          id="speed-slider"
+          min="0.25"
+          max="2"
+          step="0.05"
+          value="1"
+        >
+
+        <div class="speed-presets">
+          <button type="button" data-speed="0.5">0.5x</button>
+          <button type="button" data-speed="0.75">0.75x</button>
+          <button type="button" data-speed="1">1.0x</button>
+          <button type="button" data-speed="1.25">1.25x</button>
+          <button type="button" data-speed="1.5">1.5x</button>
+          <button type="button" data-speed="2">2.0x</button>
+        </div>
       </div>
     </div>
 
   </div>
 
+  <!-- YouTube 官方 IFrame Player API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <!-- 網站主要程式 -->
   <script src="app.js"></script>
 </body>
 </html>

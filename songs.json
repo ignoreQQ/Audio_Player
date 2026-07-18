@@ -5,7 +5,14 @@
     "artist": "米津玄師",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Lemon.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Lemon.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": true,
+    "tags": [
+      "日文",
+      "米津玄師"
+    ]
   },
   {
     "id": "N2",
@@ -13,7 +20,14 @@
     "artist": "優里 Yuuri",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/%E3%83%99%E3%83%86%E3%83%AB%E3%82%AE%E3%82%A6%E3%82%B9.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": true,
+    "tags": [
+      "日文",
+      "優里 Yuuri"
+    ]
   },
   {
     "id": "N3",
@@ -21,7 +35,14 @@
     "artist": "友成空",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Teacher.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Teacher.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": true,
+    "tags": [
+      "日文",
+      "友成空"
+    ]
   },
   {
     "id": "N4",
@@ -29,7 +50,14 @@
     "artist": "3年E組うた担",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/バイバイ YESTERDAY.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/バイバイ YESTERDAY.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/バイバイ YESTERDAY.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": true,
+    "tags": [
+      "日文",
+      "3年E組うた担"
+    ]
   },
   {
     "id": "T1",
@@ -37,7 +65,14 @@
     "artist": "糜先生 Mixer",
     "category": "華語",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/壞蛋.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/壞蛋.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/壞蛋.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": true,
+    "tags": [
+      "華語",
+      "糜先生 Mixer"
+    ]
   },
   {
     "id": "T2",
@@ -45,7 +80,14 @@
     "artist": "糜先生 Mixer",
     "category": "華語",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/笨蛋.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/笨蛋.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/笨蛋.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": true,
+    "tags": [
+      "華語",
+      "糜先生 Mixer"
+    ]
   },
   {
     "id": "T3",
@@ -53,7 +95,14 @@
     "artist": "糜先生 Mixer",
     "category": "華語",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/嗜愛動物.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/嗜愛動物.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/嗜愛動物.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": true,
+    "tags": [
+      "華語",
+      "糜先生 Mixer"
+    ]
   },
   {
     "id": "T4",
@@ -61,7 +110,14 @@
     "artist": "糜先生 Mixer",
     "category": "華語",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/長成什麼樣子算愛情.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/長成什麼樣子算愛情.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/長成什麼樣子算愛情.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": true,
+    "tags": [
+      "華語",
+      "糜先生 Mixer"
+    ]
   },
   {
     "id": "T5",
@@ -69,7 +125,14 @@
     "artist": "郭頂",
     "category": "華語",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_TW/水星記.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/水星記.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_TW/水星記.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "華語",
+      "郭頂"
+    ]
   },
   {
     "id": "N5",
@@ -77,7 +140,14 @@
     "artist": "秋絵(原唱:GUMI)",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/天ノ弱.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/天ノ弱.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/天ノ弱.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "秋絵(原唱:GUMI)"
+    ]
   },
   {
     "id": "N6",
@@ -85,7 +155,14 @@
     "artist": "Goose House",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/光るなら.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/光るなら.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/光るなら.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "Goose House"
+    ]
   },
   {
     "id": "N7",
@@ -93,7 +170,14 @@
     "artist": "RADWIMPS",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/前前前世.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/前前前世.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/前前前世.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "RADWIMPS"
+    ]
   },
   {
     "id": "N8",
@@ -101,7 +185,14 @@
     "artist": "3年E組",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/旅立ちのうた.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/旅立ちのうた.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/旅立ちのうた.json",
+    "youtubeId": "nHdTbdaUboQ",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "3年E組"
+    ]
   },
   {
     "id": "N9",
@@ -109,7 +200,14 @@
     "artist": "ナナヲアカリ Feat.Sou",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/チューリングラブ feat.Sou.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/チューリングラブ feat.Sou.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/チューリングラブ feat.Sou.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "ナナヲアカリ Feat.Sou"
+    ]
   },
   {
     "id": "N10",
@@ -117,7 +215,14 @@
     "artist": "fripSide",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/only my railgun.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/only my railgun.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/only my railgun.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "fripSide"
+    ]
   },
   {
     "id": "N11",
@@ -125,7 +230,14 @@
     "artist": "FloweR",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Flyer!.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Flyer!.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Flyer!.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "FloweR"
+    ]
   },
   {
     "id": "N12",
@@ -133,7 +245,14 @@
     "artist": "3年E組うた担",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/QUESTION.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/QUESTION.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/QUESTION.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "3年E組うた担"
+    ]
   },
   {
     "id": "N13",
@@ -141,7 +260,14 @@
     "artist": "ReoNa",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/生命換装.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/生命換装.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/生命換装.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "ReoNa"
+    ]
   },
   {
     "id": "N14",
@@ -149,7 +275,14 @@
     "artist": "YOASOBI",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/夜に駆ける.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/夜に駆ける.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/夜に駆ける.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "YOASOBI"
+    ]
   },
   {
     "id": "N15",
@@ -157,7 +290,14 @@
     "artist": "LiSA",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/紅蓮華.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/紅蓮華.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/紅蓮華.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "LiSA"
+    ]
   },
   {
     "id": "N16",
@@ -165,7 +305,14 @@
     "artist": "Mrs. GREEN APPLE",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/インフェルノ.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/インフェルノ.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/インフェルノ.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "Mrs. GREEN APPLE"
+    ]
   },
   {
     "id": "N17",
@@ -173,7 +320,14 @@
     "artist": "Eve",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/廻廻奇譚.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/廻廻奇譚.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/廻廻奇譚.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "Eve"
+    ]
   },
   {
     "id": "N18",
@@ -181,7 +335,14 @@
     "artist": "あいみょん",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/マリーゴールド.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マリーゴールド.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マリーゴールド.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "あいみょん"
+    ]
   },
   {
     "id": "N19",
@@ -189,7 +350,14 @@
     "artist": "中島美嘉",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/僕が死のうと思ったのは.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/僕が死のうと思ったのは.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/僕が死のうと思ったのは.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "中島美嘉"
+    ]
   },
   {
     "id": "N20",
@@ -197,7 +365,14 @@
     "artist": "Novelbright",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/雪の音.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/雪の音.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/雪の音.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "Novelbright"
+    ]
   },
   {
     "id": "N21",
@@ -205,7 +380,14 @@
     "artist": "YOASOBI",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/怪物.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/怪物.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/怪物.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "YOASOBI"
+    ]
   },
   {
     "id": "N22",
@@ -213,7 +395,14 @@
     "artist": "超特急",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/キャラメルハート.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/キャラメルハート.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/キャラメルハート.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "超特急"
+    ]
   },
   {
     "id": "N23",
@@ -221,7 +410,14 @@
     "artist": "eill",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Finale.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Finale.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Finale.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "eill"
+    ]
   },
   {
     "id": "N24",
@@ -229,7 +425,14 @@
     "artist": "tuki.",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/Zero.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Zero.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/Zero.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "tuki."
+    ]
   },
   {
     "id": "N25",
@@ -237,7 +440,14 @@
     "artist": "3年E組うた担",
     "category": "日文",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music/マシンガンと羅針盤.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マシンガンと羅針盤.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics/マシンガンと羅針盤.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "日文",
+      "3年E組うた担"
+    ]
   },
   {
     "id": "K1",
@@ -245,6 +455,13 @@
     "artist": "Huntr/x",
     "category": "其他",
     "audio": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Music_KR/Golden.mp3",
-    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_KR/Golden.json"
+    "lyrics": "https://raw.githubusercontent.com/ignoreQQ/Music/main/Lyrics_KR/Golden.json",
+    "youtubeId": "",
+    "cover": "",
+    "featured": false,
+    "tags": [
+      "其他",
+      "Huntr/x"
+    ]
   }
 ]

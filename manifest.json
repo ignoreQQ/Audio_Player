@@ -1,11 +1,17 @@
 {
-  "name": "歌曲播放器",
-  "short_name": "歌曲播放器",
-  "start_url": "/Audio_Player/",
+  "name": "Hibiki Music",
+  "short_name": "Hibiki",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f5f5f7",
-  "theme_color": "#007aff",
+  "background_color": "#ffffff",
+  "theme_color": "#534AB7",
   "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
